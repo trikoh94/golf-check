@@ -302,3 +302,80 @@ textarea.form-input { resize: vertical; }
 /* 메모, 푸터 */
 .report-memo { background: #fff; border-radius: .5rem; padding: .85rem 1rem; font-size: .88rem; line-height: 1.6; color: #374151; margin: 0 0 .5rem; }
 .report-footer { text-align: center; font-size: .72rem; color: #9ca3af; padding: 1.5rem 1rem; border-top: 1px solid #e5e7eb; margin-top: 1rem; }
+
+/* ─── Map Panel ──────────────────────────────────────────── */
+.map-panel {
+  background: #fff; border-top: 1px solid #e5e7eb;
+  padding: .75rem 1rem; max-height: 45vh; overflow-y: auto;
+}
+.map-panel-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .6rem; }
+.map-panel-title { font-weight: 700; font-size: .95rem; color: #1a3d2b; }
+.map-panel-sub { font-size: .75rem; color: #6b7280; margin-top: .1rem; }
+.btn-setup {
+  background: #1a3d2b; color: #fff; border: none; border-radius: .5rem;
+  padding: .45rem .85rem; font-size: .82rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+}
+.setup-notice {
+  background: #fffbeb; border: 1px solid #fcd34d; border-radius: .5rem;
+  padding: .5rem .75rem; font-size: .78rem; color: #92400e; margin-bottom: .6rem;
+}
+
+/* 핀 현황 그리드 */
+.pin-status-grid { display: grid; grid-template-columns: repeat(9, 1fr); gap: .3rem; margin-bottom: .6rem; }
+.pin-status-item {
+  aspect-ratio: 1; border-radius: .35rem; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; font-size: .72rem; font-weight: 600; position: relative;
+}
+.pin-status-item.placed { background: #f0fdf4; color: #16a34a; border: 1px solid #86efac; }
+.pin-status-item.empty { background: #f9fafb; color: #d1d5db; border: 1px solid #e5e7eb; }
+.pin-check { font-size: .6rem; position: absolute; top: 1px; right: 2px; }
+.btn-reset-pins { font-size: .75rem; color: #9ca3af; background: none; border: none; cursor: pointer; text-decoration: underline; }
+
+/* Setup 모드 */
+.setup-mode { }
+.setup-header { display: flex; align-items: center; gap: .6rem; margin-bottom: .75rem; }
+.btn-back-setup { background: none; border: none; color: #1a3d2b; font-weight: 600; font-size: .85rem; cursor: pointer; white-space: nowrap; }
+.setup-progress { flex: 1; height: 6px; background: #e5e7eb; border-radius: 999px; overflow: hidden; }
+.setup-progress-bar { height: 100%; background: #1a3d2b; border-radius: 999px; transition: width .3s; }
+.setup-progress-text { font-size: .75rem; color: #6b7280; white-space: nowrap; }
+
+.setup-instruction { margin-bottom: .75rem; }
+.setup-hole-num { font-size: 1.3rem; font-weight: 800; color: #1a3d2b; }
+.setup-guide { font-size: .83rem; color: #6b7280; margin-top: .15rem; }
+
+.gps-actions { display: flex; flex-direction: column; gap: .5rem; margin-bottom: .75rem; }
+.btn-gps {
+  width: 100%; padding: .75rem; background: #1a3d2b; color: #fff; border: none;
+  border-radius: .6rem; font-size: .9rem; font-weight: 600; cursor: pointer;
+}
+.btn-gps.locating { background: #6b7280; animation: pulse 1.2s infinite; }
+@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .6; } }
+
+.gps-result { background: #f0fdf4; border: 1px solid #86efac; border-radius: .5rem; padding: .6rem .75rem; }
+.gps-accuracy { font-size: .8rem; color: #374151; display: flex; align-items: center; gap: .4rem; margin-bottom: .5rem; }
+.accuracy-badge { font-size: .7rem; padding: .1rem .4rem; border-radius: 999px; font-weight: 600; }
+.accuracy-badge.good { background: #dcfce7; color: #16a34a; }
+.accuracy-badge.ok   { background: #fef9c3; color: #ca8a04; }
+.accuracy-badge.bad  { background: #fef2f2; color: #dc2626; }
+.btn-confirm-pin {
+  width: 100%; padding: .6rem; background: #16a34a; color: #fff; border: none;
+  border-radius: .5rem; font-size: .88rem; font-weight: 700; cursor: pointer;
+}
+.gps-error { font-size: .8rem; color: #dc2626; background: #fef2f2; border-radius: .4rem; padding: .5rem .6rem; }
+
+.btn-next-hole {
+  width: 100%; padding: .65rem; background: #1a3d2b; color: #fff; border: none;
+  border-radius: .5rem; font-size: .88rem; font-weight: 700; cursor: pointer;
+}
+.btn-redo-pin {
+  width: 100%; padding: .5rem; background: #fff; color: #6b7280; border: 1.5px solid #d1d5db;
+  border-radius: .5rem; font-size: .82rem; cursor: pointer;
+}
+
+.hole-step-bar { display: flex; flex-wrap: wrap; gap: .3rem; padding-top: .5rem; border-top: 1px solid #f3f4f6; }
+.hole-step-btn {
+  width: 30px; height: 30px; border-radius: .35rem; border: 1.5px solid #e5e7eb;
+  background: #fff; font-size: .75rem; font-weight: 600; color: #9ca3af; cursor: pointer;
+}
+.hole-step-btn.done { background: #f0fdf4; border-color: #86efac; color: #16a34a; }
+.hole-step-btn.current { background: #1a3d2b; border-color: #1a3d2b; color: #fff; }
