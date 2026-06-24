@@ -1,0 +1,13 @@
+{
+  "name": "잔디 점검 기록",
+  "short_name": "잔디점검",
+  "description": "골프장 잔디 상태 점검 기록 앱",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#f0f4f0",
+  "theme_color": "#1a3d2b",
+  "icons": [
+    { "src": "/icon-192.png", "sizes": "192x192", "type": "image/png" },
+    { "src": "/icon-512.png", "sizes": "512x512", "type": "image/png" }
+  ]
+}
