@@ -5,17 +5,29 @@ import Toast from './components/ui/Toast'
 import Lightbox from './components/ui/Lightbox'
 import NewRecord from './pages/NewRecord'
 import RecordList from './pages/RecordList'
+import RecordDetail from './pages/RecordDetail'
 import MapView from './pages/MapView'
 
 function AppInner() {
   const [tab, setTab] = useState('new')
+  const [selectedId, setSelectedId] = useState(null)
+
+  function handleTabChange(t) {
+    setTab(t)
+    setSelectedId(null)
+  }
 
   return (
     <div className="app-root">
-      <Header tab={tab} onTabChange={setTab} />
+      <Header tab={tab} onTabChange={handleTabChange} />
       <main className="app-main">
-        {tab === 'new' && <NewRecord onSaved={() => setTab('list')} />}
-        {tab === 'list' && <RecordList onSelect={(id) => console.log('view', id)} />}
+        {tab === 'new' && <NewRecord onSaved={() => handleTabChange('list')} />}
+        {tab === 'list' && !selectedId && (
+          <RecordList onSelect={id => setSelectedId(id)} />
+        )}
+        {tab === 'list' && selectedId && (
+          <RecordDetail id={selectedId} onBack={() => setSelectedId(null)} />
+        )}
         {tab === 'map' && <MapView />}
       </main>
       <Toast />

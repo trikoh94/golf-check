@@ -87,9 +87,4 @@ export default function SummaryPage({ onSaved }) {
         </div>
       )}
 
-      <button className="btn-save" onClick={handleSave}>
-        💾 저장하기
-      </button>
-    </div>
-  )
-}
+      <button classN
