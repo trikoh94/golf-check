@@ -24,12 +24,12 @@ export default function SummaryPage({ onSaved }) {
 
     const payload = {
       date,
-      club,
-      course,
+      club: club || '해남 파인트리 골프장',
+      course: course || null,
       inspector,
-      weather,
-      next_visit: nextVisit,
-      memo,
+      weather: weather || null,
+      next_visit: nextVisit || null,
+      memo: memo || null,
       hole_count: holeCount,
       tee: holeState.tee,
       fairway: holeState.fw,
