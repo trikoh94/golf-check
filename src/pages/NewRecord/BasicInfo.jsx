@@ -76,6 +76,8 @@ export default function BasicInfo() {
                 {wd.surfaceTemp && <span className="wc-chip">🌿 지표면 {wd.surfaceTemp}</span>}
                 {wd.soilTemp0   && <span className="wc-chip">🪱 토양0cm {wd.soilTemp0}</span>}
                 {wd.soilTemp6   && <span className="wc-chip">🪱 토양6cm {wd.soilTemp6}</span>}
+                {wd.etDay       && <span className="wc-chip et">💧 증발산 {wd.etDay}</span>}
+                {wd.radiationDay && <span className="wc-chip rad">☀️ 일사량 {wd.radiationDay}</span>}
                 {wd.rain        && <span className="wc-chip rain">🌧 강수 {wd.rain}</span>}
               </div>
               {wd.warnings?.length > 0 && (

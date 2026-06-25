@@ -22,7 +22,7 @@ export default function SummaryPage({ onSaved }) {
       return
     }
 
-    const parseNum = v => v ? parseFloat(v) : null
+    const r = weatherDetail?._raw ?? {}
 
     const payload = {
       date,
@@ -30,13 +30,15 @@ export default function SummaryPage({ onSaved }) {
       course: course || null,
       inspector,
       weather: weather || null,
-      temperature:  parseNum(weatherDetail?.temp),
-      humidity:     parseNum(weatherDetail?.humidity),
-      wind_speed:   parseNum(weatherDetail?.wind),
-      dew_point:    parseNum(weatherDetail?.dewPoint),
-      surface_temp: parseNum(weatherDetail?.surfaceTemp),
-      soil_temp_0:  parseNum(weatherDetail?.soilTemp0),
-      soil_temp_6:  parseNum(weatherDetail?.soilTemp6),
+      temperature:    r.temperature   ?? null,
+      humidity:       r.humidity      ?? null,
+      wind_speed:     r.wind_speed    ?? null,
+      dew_point:      r.dew_point     ?? null,
+      surface_temp:   r.surface_temp  ?? null,
+      soil_temp_0:    r.soil_temp_0   ?? null,
+      soil_temp_6:    r.soil_temp_6   ?? null,
+      et_day:         r.et_day        ?? null,
+      radiation_day:  r.radiation_day ?? null,
       next_visit: nextVisit || null,
       memo: memo || null,
       hole_count: holeCount,
@@ -67,15 +69,19 @@ export default function SummaryPage({ onSaved }) {
         <div className="info-row"><span>점검자</span><strong>{formData.inspector || '—'}</strong></div>
         <div className="info-row">
           <span>날씨</span>
-          <strong>
-            {wd ? `${wd.label} ${wd.temp ?? ''}` : formData.weather || '—'}
-          </strong>
+          <strong>{wd ? `${wd.label} ${wd.temp ?? ''}` : formData.weather || '—'}</strong>
         </div>
-        {wd && (
+        {wd?.etDay && (
+          <div className="info-row"><span>증발산량</span><strong>{wd.etDay}</strong></div>
+        )}
+        {wd?.soilTemp0 && (
           <div className="info-row">
             <span>토양온도</span>
-            <strong>{[wd.soilTemp0 && `0cm:${wd.soilTemp0}`, wd.soilTemp6 && `6cm:${wd.soilTemp6}`].filter(Boolean).join(' / ') || '—'}</strong>
+            <strong>{wd.soilTemp0}{wd.soilTemp6 ? ` / ${wd.soilTemp6}` : ''}</strong>
           </div>
+        )}
+        {wd?.radiationDay && (
+          <div className="info-row"><span>일사량</span><strong>{wd.radiationDay}</strong></div>
         )}
       </div>
 
