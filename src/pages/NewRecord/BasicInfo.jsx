@@ -15,11 +15,19 @@ export default function BasicInfo() {
     setWeatherLoading(true)
     setWeatherError(null)
     setDebugRaw(null)
+    setWeatherDetail(null)
     try {
       const res = await fetch('/api/weather', { cache: 'no-store' })
       const data = await res.json()
-      setDebugRaw(JSON.stringify(data, null, 2))
-      if (data.error) throw new Error(data.error)
+
+      // 디버그 구조 확인용
+      if (data.debug) {
+        setDebugRaw(JSON.stringify(data.structure, null, 2))
+        setWeatherLoading(false)
+        return
+      }
+
+      if (data.error) throw new Error(`${data.error} | ${data.raw ?? ''}`)
       setForm({ weather: data.label })
       setWeatherDetail(data)
     } catch (e) {
@@ -64,22 +72,35 @@ export default function BasicInfo() {
             className={'btn-weather-fetch' + (weatherLoading ? ' loading' : '')}
             onClick={fetchWeather} disabled={weatherLoading}
           >
-            {weatherLoading ? '📡 불러오는 중...' : '📡 현재 날씨 가져오기'}
+            {weatherLoading ? '📡 불러오는 중...' : '📡 현재 날씨 가져오기 (해남)'}
           </button>
 
           {weatherDetail && (
-            <div className="weather-detail">
-              <span className="wd-main">{weatherDetail.label}</span>
-              {weatherDetail.temp && <span className="wd-chip">🌡 {weatherDetail.temp}</span>}
-              {weatherDetail.humidity && <span className="wd-chip">💧 {weatherDetail.humidity}</span>}
-              {weatherDetail.wind && <span className="wd-chip">💨 {weatherDetail.wind}</span>}
-              {weatherDetail.rain && <span className="wd-chip">🌧 {weatherDetail.rain}</span>}
+            <div className="weather-card">
+              <div className="wc-main">
+                <span className="wc-label">{weatherDetail.label}</span>
+                {weatherDetail.temp && <span className="wc-temp">{weatherDetail.temp}</span>}
+              </div>
+              <div className="wc-chips">
+                {weatherDetail.humidity  && <span className="wc-chip">💧 습도 {weatherDetail.humidity}</span>}
+                {weatherDetail.wind      && <span className="wc-chip">💨 풍속 {weatherDetail.wind}</span>}
+                {weatherDetail.dewPoint  && <span className="wc-chip">🌡 이슬점 {weatherDetail.dewPoint}</span>}
+                {weatherDetail.groundTemp && <span className="wc-chip">🌿 지면온도 {weatherDetail.groundTemp}</span>}
+                {weatherDetail.soilTemp5 && <span className="wc-chip">🪱 지중5cm {weatherDetail.soilTemp5}</span>}
+                {weatherDetail.rain      && <span className="wc-chip rain">🌧 강수 {weatherDetail.rain}</span>}
+              </div>
+              {weatherDetail.warnings?.length > 0 && (
+                <div className="wc-warnings">
+                  {weatherDetail.warnings.map((w, i) => (
+                    <div key={i} className="wc-warning">{w}</div>
+                  ))}
+                </div>
+              )}
             </div>
           )}
 
-          {/* 디버그: 실제 API 응답 표시 */}
           {debugRaw && (
-            <pre style={{ fontSize: '.7rem', background: '#f3f4f6', padding: '.5rem', borderRadius: '.4rem', overflow: 'auto', maxHeight: '120px' }}>
+            <pre style={{ fontSize: '.68rem', background: '#f3f4f6', padding: '.5rem', borderRadius: '.4rem', overflow: 'auto', maxHeight: '160px' }}>
               {debugRaw}
             </pre>
           )}

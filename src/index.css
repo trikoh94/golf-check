@@ -478,3 +478,20 @@ textarea.form-input { resize: vertical; }
 .weather-error { font-size: .78rem; color: #dc2626; background: #fef2f2; border-radius: .4rem; padding: .4rem .6rem; }
 .weather-manual-label { font-size: .75rem; color: #9ca3af; font-weight: 500; }
 .weather-selected { font-size: .8rem; color: #374151; }
+
+/* ─── Weather Card ───────────────────────────────────────── */
+.weather-card {
+  background: #f0f9ff; border: 1px solid #bae6fd;
+  border-radius: .6rem; padding: .65rem .85rem;
+}
+.wc-main { display: flex; align-items: baseline; gap: .6rem; margin-bottom: .45rem; }
+.wc-label { font-size: 1rem; font-weight: 700; color: #0369a1; }
+.wc-temp { font-size: 1.4rem; font-weight: 800; color: #0c4a6e; }
+.wc-chips { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .4rem; }
+.wc-chip {
+  font-size: .75rem; background: #e0f2fe; color: #0369a1;
+  border-radius: 999px; padding: .15rem .55rem;
+}
+.wc-chip.rain { background: #dbeafe; color: #1d4ed8; }
+.wc-warnings { display: flex; flex-direction: column; gap: .25rem; border-top: 1px solid #bae6fd; padding-top: .4rem; }
+.wc-warning { font-size: .78rem; color: #92400e; background: #fffbeb; border-radius: .35rem; padding: .2rem .5rem; }
