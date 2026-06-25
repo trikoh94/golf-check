@@ -539,3 +539,106 @@ textarea.form-input { resize: vertical; }
 .wlc-detail-chip { font-size: .75rem; background: #f3f4f6; color: #374151; border-radius: 999px; padding: .15rem .5rem; }
 .wlc-memo { font-size: .82rem; color: #6b7280; margin-top: .2rem; }
 .wlc-worker { font-size: .75rem; color: #9ca3af; margin-top: .2rem; }
+
+/* ─── Disease Panel ──────────────────────────────────────── */
+.disease-panel { margin-top: .75rem; }
+.disease-panel.safe { background: #f0fdf4; border-radius: .6rem; padding: .75rem 1rem; }
+.dp-title { font-weight: 700; font-size: .88rem; color: #1a3d2b; margin-bottom: .5rem; }
+.dp-safe { font-size: .82rem; color: #16a34a; }
+
+.dp-list { display: flex; flex-direction: column; gap: .6rem; }
+.dp-card { border-radius: .6rem; padding: .75rem; border-left: 4px solid #e5e7eb; }
+.dp-card-header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: .4rem; }
+.dp-name { font-weight: 700; font-size: .9rem; display: block; }
+.dp-pathogen { font-size: .68rem; color: #6b7280; font-style: italic; }
+.dp-right { display: flex; align-items: center; gap: .4rem; }
+.dp-level { font-size: .72rem; padding: .15rem .5rem; border-radius: 999px; font-weight: 700; }
+.dp-score { font-size: 1rem; font-weight: 800; }
+
+.dp-bar-wrap { height: 5px; background: rgba(0,0,0,.08); border-radius: 999px; overflow: hidden; margin-bottom: .4rem; }
+.dp-bar { height: 100%; border-radius: 999px; transition: width .3s; }
+
+.dp-sections { font-size: .75rem; color: #374151; margin-bottom: .35rem; font-weight: 500; }
+.dp-reasons { display: flex; flex-direction: column; gap: .15rem; margin-bottom: .4rem; }
+.dp-reason { font-size: .75rem; color: #374151; }
+.dp-desc { font-size: .75rem; color: #6b7280; line-height: 1.4; }
+.dp-urgent { margin-top: .4rem; font-size: .78rem; font-weight: 700; color: #dc2626; background: #fef2f2; border-radius: .35rem; padding: .3rem .5rem; }
+.wc-minmax { font-size: .75rem; color: #6b7280; margin-left: .25rem; align-self: flex-end; padding-bottom: .1rem; }
+
+/* ── Worker View ────────────────── */
+.worker-top-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  padding: .6rem 1rem; background: #1e3a5f; color: #fff; font-size: .85rem;
+}
+.worker-badge { background: #f59e0b; color: #1c1c1e; padding: .2rem .6rem; border-radius: 99px; font-weight: 700; }
+.worker-course { opacity: .8; }
+
+.worker-view { padding: 1rem; }
+.worker-header h2 { font-size: 1.2rem; font-weight: 700; margin-bottom: .2rem; }
+.worker-subtitle { font-size: .8rem; color: #6b7280; margin-bottom: 1rem; }
+
+.worker-weather-bar { display: flex; align-items: center; gap: .75rem; flex-wrap: wrap; margin-bottom: 1rem; }
+.worker-weather-label { font-size: .82rem; color: #374151; }
+
+.worker-alert-banner {
+  border-radius: 10px; padding: .85rem 1rem; margin-bottom: 1rem;
+  background: #fef2f2; border: 1.5px solid #fca5a5;
+}
+.worker-alert-banner.urgent { background: #fff1f1; border-color: #ef4444; }
+.alert-banner-title { font-size: .9rem; font-weight: 700; color: #dc2626; margin-bottom: .4rem; }
+.alert-banner-item { font-size: .82rem; color: #991b1b; margin-bottom: .2rem; }
+
+.worker-risk-summary { margin-bottom: 1rem; }
+.worker-risk-summary h3 { font-size: .95rem; font-weight: 700; margin-bottom: .5rem; }
+.worker-risk-chips { display: flex; flex-direction: column; gap: .4rem; }
+.worker-risk-chip {
+  display: flex; align-items: center; gap: .5rem;
+  background: #f9fafb; border: 1px solid #e5e7eb;
+  border-radius: 8px; padding: .5rem .75rem;
+}
+.worker-risk-chip.high { background: #fff1f1; }
+.worker-risk-chip.mid  { background: #fffbeb; }
+.risk-chip-name { font-weight: 600; font-size: .85rem; flex: 1; }
+.risk-chip-score { font-size: .8rem; color: #374151; margin-right: .25rem; }
+.risk-chip-level { font-size: .72rem; font-weight: 700; padding: .1rem .4rem; border-radius: 4px; }
+.lvl-danger { background: #fee2e2; color: #b91c1c; }
+.lvl-warn   { background: #fef3c7; color: #92400e; }
+.lvl-watch  { background: #e0f2fe; color: #0369a1; }
+
+.worker-alerts { margin-bottom: 1rem; }
+.worker-alerts h3 { font-size: .95rem; font-weight: 700; margin-bottom: .5rem; }
+.worker-alert-list { display: flex; flex-direction: column; gap: .4rem; }
+.worker-alert-item {
+  background: #f9fafb; border: 1px solid #e5e7eb;
+  border-radius: 10px; padding: .6rem .85rem;
+}
+.worker-alert-item.urgent { border-color: #f87171; background: #fff5f5; }
+.wai-left { display: flex; align-items: center; gap: .4rem; margin-bottom: .15rem; }
+.wai-right { display: flex; align-items: center; gap: .4rem; }
+.wai-urgent-badge { background: #ef4444; color: #fff; font-size: .68rem; font-weight: 700; padding: .1rem .4rem; border-radius: 4px; }
+.wai-hole { font-size: .92rem; font-weight: 700; }
+.wai-sec { font-size: .8rem; color: #6b7280; }
+.wai-disease { font-size: .82rem; font-weight: 600; }
+.wai-level { font-size: .72rem; font-weight: 700; padding: .1rem .4rem; border-radius: 4px; }
+.wai-score { font-size: .76rem; color: #6b7280; margin-top: .2rem; }
+
+.worker-no-alerts {
+  text-align: center; padding: 1.2rem; background: #f0fdf4;
+  border: 1px solid #86efac; border-radius: 10px; font-size: .88rem; color: #166534;
+  margin-bottom: 1rem;
+}
+.worker-status { margin-bottom: 1rem; }
+.worker-status h3 { font-size: .95rem; font-weight: 700; margin-bottom: .5rem; }
+.worker-status-grid { display: grid; grid-template-columns: repeat(3, 1fr); gap: .5rem; }
+.worker-status-card {
+  background: #f9fafb; border: 1px solid #e5e7eb;
+  border-radius: 10px; padding: .6rem .5rem; text-align: center; font-size: .78rem;
+}
+.ws-score { font-size: 1.1rem; font-weight: 700; margin: .2rem 0; }
+.ws-score.gray { color: #9ca3af; }
+.ws-count { color: #9ca3af; font-size: .7rem; }
+
+.worker-empty {
+  text-align: center; padding: 2rem 1rem;
+  color: #9ca3af; font-size: .88rem; line-height: 1.6;
+}

@@ -1,5 +1,6 @@
 import { useState } from 'react'
 import { useApp } from '../../context/AppContext'
+import DiseasePanel from '../../components/disease/DiseasePanel'
 
 const HOLE_OPTIONS = [9, 18, 27]
 
@@ -35,7 +36,7 @@ export default function BasicInfo() {
 
         <label className="form-label">골프장명</label>
         <input type="text" className="form-input" value={formData.club}
-          placeholder="골프장명" onChange={e => setForm({ club: e.target.value })} />
+          onChange={e => setForm({ club: e.target.value })} />
 
         <label className="form-label">코스명</label>
         <input type="text" className="form-input" value={formData.course}
@@ -60,36 +61,41 @@ export default function BasicInfo() {
             className={'btn-weather-fetch' + (weatherLoading ? ' loading' : '')}
             onClick={fetchWeather} disabled={weatherLoading}
           >
-            {weatherLoading ? '📡 불러오는 중...' : '📡 현재 날씨 불러오기'}
+            {weatherLoading ? '📡 불러오는 중...' : '📡 현재 날씨 불러오기 (해남)'}
           </button>
 
-          {wd ? (
-            <div className="weather-card">
-              <div className="wc-main">
-                <span className="wc-label">{wd.label}</span>
-                <span className="wc-temp">{wd.temp}</span>
-              </div>
-              <div className="wc-chips">
-                {wd.humidity    && <span className="wc-chip">💧 습도 {wd.humidity}</span>}
-                {wd.wind        && <span className="wc-chip">💨 풍속 {wd.wind}</span>}
-                {wd.dewPoint    && <span className="wc-chip">🌡 이슬점 {wd.dewPoint}</span>}
-                {wd.surfaceTemp && <span className="wc-chip">🌿 지표면 {wd.surfaceTemp}</span>}
-                {wd.soilTemp0   && <span className="wc-chip">🪱 토양0cm {wd.soilTemp0}</span>}
-                {wd.soilTemp6   && <span className="wc-chip">🪱 토양6cm {wd.soilTemp6}</span>}
-                {wd.etDay       && <span className="wc-chip et">💧 증발산 {wd.etDay}</span>}
-                {wd.radiationDay && <span className="wc-chip rad">☀️ 일사량 {wd.radiationDay}</span>}
-                {wd.rain        && <span className="wc-chip rain">🌧 강수 {wd.rain}</span>}
-              </div>
-              {wd.warnings?.length > 0 && (
-                <div className="wc-warnings">
-                  {wd.warnings.map((w, i) => <div key={i} className="wc-warning">{w}</div>)}
+          {wd && (
+            <>
+              <div className="weather-card">
+                <div className="wc-main">
+                  <span className="wc-label">{wd.label}</span>
+                  <span className="wc-temp">{wd.temp}</span>
+                  {wd.tMin && wd.tMax && (
+                    <span className="wc-minmax">최저 {wd.tMin} / 최고 {wd.tMax}</span>
+                  )}
                 </div>
-              )}
-              <button className="wc-reset" onClick={() => setForm({ weather: '', weatherDetail: null })}>다시 불러오기</button>
-            </div>
-          ) : (
-            weatherError && <div className="weather-error">⚠️ {weatherError}</div>
+                <div className="wc-chips">
+                  {wd.humidity     && <span className="wc-chip">💧 습도 {wd.humidity}</span>}
+                  {wd.wind         && <span className="wc-chip">💨 풍속 {wd.wind}</span>}
+                  {wd.dewPoint     && <span className="wc-chip">🌡 이슬점 {wd.dewPoint}</span>}
+                  {wd.nightMinTemp && <span className="wc-chip">🌙 야간최저 {wd.nightMinTemp}</span>}
+                  {wd.soilTemp0    && <span className="wc-chip">🌿 지면 {wd.soilTemp0}</span>}
+                  {wd.soilTemp6    && <span className="wc-chip">🪱 토양6cm {wd.soilTemp6}</span>}
+                  {wd.etDay        && <span className="wc-chip et">💧 ET {wd.etDay}</span>}
+                  {wd.radiationDay && <span className="wc-chip rad">☀️ 일사 {wd.radiationDay}</span>}
+                  {wd.rain         && <span className="wc-chip rain">🌧 강수 {wd.rain}</span>}
+                </div>
+                <button className="wc-reset" onClick={() => setForm({ weather: '', weatherDetail: null })}>
+                  다시 불러오기
+                </button>
+              </div>
+
+              {/* 관리자 전용: 병해 위험도 */}
+              <DiseasePanel weatherRaw={wd._raw} />
+            </>
           )}
+
+          {weatherError && <div className="weather-error">⚠️ {weatherError}</div>}
         </div>
 
         <label className="form-label">다음 점검</label>

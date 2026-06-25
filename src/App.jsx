@@ -8,6 +8,10 @@ import RecordList from './pages/RecordList'
 import RecordDetail from './pages/RecordDetail'
 import MapView from './pages/MapView'
 import WorkLog from './pages/WorkLog'
+import WorkerView from './pages/WorkerView'
+
+// URL 기반 역할 분리: /worker → 직원 뷰, 그 외 → 관리자
+const isWorker = window.location.pathname.startsWith('/worker')
 
 function AppInner() {
   const [tab, setTab] = useState('new')
@@ -18,6 +22,23 @@ function AppInner() {
     setSelectedId(null)
   }
 
+  // 직원 뷰: 단순 작업지시 화면
+  if (isWorker) {
+    return (
+      <div className="app-root">
+        <div className="worker-top-bar">
+          <span className="worker-badge">👷 직원 모드</span>
+          <span className="worker-course">해남 파인트리 골프장</span>
+        </div>
+        <main className="app-main">
+          <WorkerView />
+        </main>
+        <Toast />
+      </div>
+    )
+  }
+
+  // 관리자 뷰: 전체 기능
   return (
     <div className="app-root">
       <Header tab={tab} onTabChange={handleTabChange} />
