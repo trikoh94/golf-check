@@ -83,8 +83,7 @@ export default function RecordDetail({ id, onBack }) {
       {SEC_KEYS.map(sec => {
         const holes = getHoles(secMap[sec])
         if (!holes.length) return null
-        const badHoles = holes.filter(h => h.score < 5 || h.issues?.length > 0)
-        const goodWithPhoto = holes.filter(h => h.score >= 5 && !h.issues?.length && h.photos?.length > 0)
+        const noteHoles = holes.filter(h => h.score < 5 || h.issues?.length > 0 || h.photos?.length > 0 || h.memo)
 
         return (
           <div key={sec} className="report-section">
@@ -106,11 +105,11 @@ export default function RecordDetail({ id, onBack }) {
               })}
             </div>
 
-            {badHoles.length > 0 && (
+            {noteHoles.length > 0 && (
               <>
-                <h3 className="report-sub-title">⚠️ 이슈 발생 홀</h3>
+                <h3 className="report-sub-title">📌 메모 / 사진 / 이슈 홀</h3>
                 <div className="issue-cards">
-                  {badHoles.map(h => {
+                  {noteHoles.map(h => {
                     const m = SCORE_META[h.score]
                     return (
                       <div key={h.num} className="issue-card" style={{ borderLeft: `4px solid ${m.color}` }}>
@@ -137,18 +136,6 @@ export default function RecordDetail({ id, onBack }) {
                 </div>
               </>
             )}
-
-            {goodWithPhoto.map(h => (
-              <div key={h.num} className="issue-card" style={{ borderLeft: '4px solid #16a34a' }}>
-                <div className="ic-header">
-                  <span className="ic-num">{h.num}번 홀</span>
-                  <span className="ic-score-badge" style={{ background: SCORE_META[h.score].color }}>{h.score}점 {SCORE_META[h.score].label}</span>
-                </div>
-                {h.memo && <div className="ic-memo">📝 {h.memo}</div>}
-                <div className="ic-photos">
-                  {h.photos.map((p, idx) => (
-                    <img key={idx} src={p.dataUrl} alt="" className="ic-photo" />
-                  ))}
                 </div>
               </div>
             ))}
