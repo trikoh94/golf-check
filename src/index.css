@@ -719,3 +719,36 @@ textarea.form-input { resize: vertical; }
 .wcl-disease { font-size: .76rem; color: #b45309; margin-bottom: .15rem; }
 .wcl-risks { font-size: .73rem; color: #6b7280; margin-bottom: .1rem; }
 .wcl-memo { font-size: .82rem; color: #374151; font-style: italic; }
+
+.wcl-actions { display: flex; gap: .3rem; margin-left: auto; }
+.wcl-btn-edit {
+  font-size: .72rem; padding: .15rem .5rem; border-radius: 5px;
+  border: 1px solid #93c5fd; color: #1d4ed8; background: #eff6ff; cursor: pointer;
+}
+.wcl-btn-del {
+  font-size: .72rem; padding: .15rem .5rem; border-radius: 5px;
+  border: 1px solid #fca5a5; color: #dc2626; background: #fff5f5; cursor: pointer;
+}
+
+.worker-insp-ref { color: #9ca3af; font-size: .75rem; }
+.whb-score { font-size: .62rem; font-weight: 700; line-height: 1; }
+
+/* 작업 모달 사진 */
+.wm-photo-area { display: flex; flex-wrap: wrap; gap: .4rem; margin-bottom: .5rem; }
+.wm-photo-wrap { position: relative; }
+.wm-photo-thumb { width: 64px; height: 64px; object-fit: cover; border-radius: 6px; border: 1px solid #e5e7eb; }
+.wm-photo-del {
+  position: absolute; top: -5px; right: -5px;
+  background: #ef4444; color: #fff; border: none; border-radius: 50%;
+  width: 18px; height: 18px; font-size: .65rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.wm-photo-add {
+  width: 64px; height: 64px; border-radius: 6px; border: 1.5px dashed #d1d5db;
+  background: #f9fafb; font-size: .72rem; color: #6b7280; cursor: pointer;
+  display: flex; align-items: center; justify-content: center; text-align: center; padding: .25rem;
+}
+
+/* 오늘 로그 사진 썸네일 */
+.wli-photos { display: flex; gap: .3rem; flex-wrap: wrap; margin: .3rem 0; }
+.wli-photo-thumb { width: 52px; height: 52px; object-fit: cover; border-radius: 5px; border: 1px solid #e5e7eb; }
