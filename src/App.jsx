@@ -9,8 +9,8 @@ import RecordDetail from './pages/RecordDetail'
 import MapView from './pages/MapView'
 import WorkCheck from './pages/WorkCheck'
 import WorkerView from './pages/WorkerView'
+import AdminSettings from './pages/AdminSettings'
 
-// URL 기반 역할 분리: /worker → 직원 뷰, 그 외 → 관리자
 const isWorker = window.location.pathname.startsWith('/worker')
 
 function AppInner() {
@@ -22,7 +22,6 @@ function AppInner() {
     setSelectedId(null)
   }
 
-  // 직원 뷰: 단순 작업지시 화면
   if (isWorker) {
     return (
       <div className="app-root">
@@ -38,16 +37,16 @@ function AppInner() {
     )
   }
 
-  // 관리자 뷰: 전체 기능
   return (
     <div className="app-root">
       <Header tab={tab} onTabChange={handleTabChange} />
       <main className="app-main">
-        {tab === 'new'  && <NewRecord onSaved={() => handleTabChange('list')} />}
-        {tab === 'list' && !selectedId && <RecordList onSelect={id => setSelectedId(id)} />}
-        {tab === 'list' && selectedId  && <RecordDetail id={selectedId} onBack={() => setSelectedId(null)} />}
+        {tab === 'new'       && <NewRecord onSaved={() => handleTabChange('list')} />}
+        {tab === 'list'      && !selectedId && <RecordList onSelect={id => setSelectedId(id)} />}
+        {tab === 'list'      && selectedId  && <RecordDetail id={selectedId} onBack={() => setSelectedId(null)} />}
         {tab === 'map'       && <MapView />}
         {tab === 'workcheck' && <WorkCheck />}
+        {tab === 'settings'  && <AdminSettings />}
       </main>
       <Toast />
       <Lightbox />

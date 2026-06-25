@@ -72,14 +72,25 @@ function reducer(state, action) {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: { ...state.holeState[sec], [hole]: { score: null, issues: [], memo: '', photos: [] } },
+          [sec]: { ...state.holeState[sec], [hole]: { score: null, detail: {}, weedTypes: {}, memo: '', photos: [] } },
+        },
+      }
+    }
+
+    case 'SET_HOLE_DETAIL': {
+      const { sec, hole, detail, score, weedTypes } = action.payload
+      return {
+        ...state,
+        holeState: {
+          ...state.holeState,
+          [sec]: { ...state.holeState[sec], [hole]: { ...state.holeState[sec][hole], detail, score, weedTypes } },
         },
       }
     }
 
     case 'TOGGLE_HOLE_ISSUE': {
       const { sec, hole, issue } = action.payload
-      const current = state.holeState[sec][hole].issues
+      const current = state.holeState[sec][hole].issues ?? []
       const next = current.includes(issue) ? current.filter(i => i !== issue) : [...current, issue]
       return {
         ...state,
@@ -103,7 +114,7 @@ function reducer(state, action) {
 
     case 'ADD_HOLE_PHOTOS': {
       const { sec, hole, photos } = action.payload
-      const merged = [...state.holeState[sec][hole].photos, ...photos].slice(0, 2)
+      const merged = [...state.holeState[sec][hole].photos, ...photos]
       return {
         ...state,
         holeState: {
@@ -153,6 +164,8 @@ export function AppProvider({ children }) {
   const setHoleUninspected = useCallback((sec, hole) => dispatch({ type: 'SET_HOLE_UNINSPECTED', payload: { sec, hole } }), [])
   const toggleHoleIssue = useCallback((sec, hole, issue) => dispatch({ type: 'TOGGLE_HOLE_ISSUE', payload: { sec, hole, issue } }), [])
   const setHoleMemo = useCallback((sec, hole, memo) => dispatch({ type: 'SET_HOLE_MEMO', payload: { sec, hole, memo } }), [])
+  const setHoleDetail = useCallback((sec, hole, detail, score, weedTypes) =>
+    dispatch({ type: 'SET_HOLE_DETAIL', payload: { sec, hole, detail, score, weedTypes } }), [])
   const resetAll = useCallback(() => dispatch({ type: 'RESET_ALL' }), [])
 
   const addHolePhotos = useCallback(async (sec, hole, files) => {
@@ -185,7 +198,7 @@ export function AppProvider({ children }) {
     <AppContext.Provider value={{
       ...state,
       setForm, setHoleCount, activateHole, setHoleScore, setHoleUninspected,
-      toggleHoleIssue, setHoleMemo, addHolePhotos, removeHolePhoto, resetAll,
+      toggleHoleIssue, setHoleMemo, setHoleDetail, addHolePhotos, removeHolePhoto, resetAll,
       showToast, showLightbox, hideLightbox,
     }}>
       {children}

@@ -763,3 +763,53 @@ textarea.form-input { resize: vertical; }
   font-size: 1.1rem; animation: pulse 1s infinite;
 }
 @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.4} }
+
+/* ── HolePanel 세부 항목 ── */
+.hps-hint { font-size: .7rem; color: #9ca3af; margin-left: .5rem; }
+.hps-metrics { padding: .25rem 0; display: flex; flex-direction: column; gap: .5rem; }
+.hps-metric-group { background: #f9fafb; border-radius: 10px; padding: .6rem .75rem; }
+.hps-metric-group-title { font-size: .75rem; font-weight: 700; color: #6b7280; margin-bottom: .5rem; }
+.hps-metric-group-title span { font-weight: 400; }
+.hps-metric-row { display: flex; align-items: center; gap: .4rem; margin-bottom: .35rem; }
+.hps-metric-row:last-child { margin-bottom: 0; }
+.hps-metric-label { font-size: .78rem; min-width: 72px; color: #374151; }
+.hps-metric-btns { display: flex; gap: .2rem; }
+.hps-m-btn {
+  width: 30px; height: 30px; border-radius: 6px; border: 1.5px solid #e5e7eb;
+  background: #fff; font-size: .8rem; font-weight: 600; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.hps-m-btn.active { color: #fff; }
+
+/* 숫자 입력 */
+.hps-number-input-wrap { display: flex; align-items: center; gap: .25rem; }
+.hps-number-input { width: 60px; border: 1.5px solid #e5e7eb; border-radius: 6px; padding: .25rem .4rem; font-size: .82rem; }
+.hps-unit { font-size: .72rem; color: #6b7280; }
+
+/* 이종잔디 타입 */
+.hps-weed-types { display: flex; gap: .3rem; flex-wrap: wrap; margin: .25rem 0 .35rem 80px; }
+.hps-weed-btn {
+  font-size: .7rem; padding: .15rem .5rem; border-radius: 99px;
+  border: 1.5px solid #d1d5db; background: #f9fafb; cursor: pointer; color: #374151;
+}
+.hps-weed-btn.active { border-color: #f97316; background: #fff7ed; color: #c2410c; font-weight: 600; }
+
+/* ── AdminSettings ── */
+.settings-desc { font-size: .82rem; color: #6b7280; margin-bottom: 1rem; }
+.settings-sec-block { background: #f9fafb; border-radius: 12px; padding: .85rem 1rem; margin-bottom: 1rem; }
+.settings-sec-header { display: flex; justify-content: space-between; align-items: center; font-weight: 700; margin-bottom: .75rem; }
+.settings-total { font-size: .78rem; font-weight: 600; }
+.settings-total.valid { color: #16a34a; }
+.settings-total.invalid { color: #dc2626; }
+.settings-metric-list { display: flex; flex-direction: column; gap: .4rem; }
+.settings-metric-row { display: flex; align-items: center; gap: .5rem; }
+.settings-metric-label { font-size: .78rem; min-width: 72px; }
+.settings-dir-badge { font-size: .65rem; padding: .1rem .3rem; border-radius: 4px; background: #f3f4f6; color: #6b7280; white-space: nowrap; }
+.settings-input-wrap { display: flex; align-items: center; gap: .2rem; }
+.settings-input { width: 48px; border: 1.5px solid #e5e7eb; border-radius: 6px; padding: .2rem .35rem; font-size: .82rem; text-align: center; }
+.settings-pct { font-size: .75rem; color: #6b7280; }
+.settings-bar-wrap { flex: 1; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
+.settings-bar { height: 100%; border-radius: 3px; transition: width .2s; }
+.settings-actions { display: flex; gap: .75rem; margin-bottom: .75rem; }
+.settings-btn-reset { flex: 1; padding: .7rem; border-radius: 10px; border: 1.5px solid #e5e7eb; background: #fff; font-size: .88rem; cursor: pointer; color: #6b7280; }
+.settings-note { font-size: .72rem; color: #9ca3af; text-align: center; }

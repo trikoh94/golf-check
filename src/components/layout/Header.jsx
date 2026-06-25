@@ -4,6 +4,7 @@ export default function Header({ tab, onTabChange }) {
     { key: 'list',      label: '📋 기록' },
     { key: 'workcheck', label: '✅ 작업확인' },
     { key: 'map',       label: '🗺️ 지도' },
+    { key: 'settings',  label: '⚙️ 설정' },
   ]
   return (
     <header className="app-header">

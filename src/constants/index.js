@@ -65,13 +65,13 @@ export const SUBTAB_LABEL = {
 }
 
 export function initHoleState() {
-  return { score: null, issues: [], memo: '', photos: [] }
+  return { score: null, detail: {}, weedTypes: {}, memo: '', photos: [] }
 }
 
 export function initAllHoles(count) {
   const obj = {}
   for (let i = 1; i <= count; i++) {
-    obj[i] = { score: null, issues: [], memo: '', photos: [] }
+    obj[i] = { score: null, detail: {}, weedTypes: {}, memo: '', photos: [] }
   }
   return obj
 }
