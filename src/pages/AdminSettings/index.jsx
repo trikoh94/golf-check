@@ -1,31 +1,42 @@
 import { useState } from 'react'
-import { SCORE_METRICS, DEFAULT_WEIGHTS, loadWeights, saveWeights } from '../../lib/scoreCalc'
+import { SCORE_METRICS, DEFAULT_WEIGHTS } from '../../lib/scoreCalc'
 import { SEC_NAME, SEC_EMOJI } from '../../constants'
+import { useApp } from '../../context/AppContext'
 
 const SECS = ['green', 'fw', 'tee']
 
 export default function AdminSettings() {
-  const [weights, setWeights] = useState(loadWeights())
+  const { weights, updateWeights, showToast } = useApp()
+  const [local, setLocal] = useState(() => JSON.parse(JSON.stringify(weights)))
+  const [saving, setSaving] = useState(false)
   const [saved, setSaved] = useState(false)
 
   function setWeight(sec, key, val) {
     const num = Math.max(0, Math.min(100, Number(val) || 0))
-    setWeights(w => ({ ...w, [sec]: { ...w[sec], [key]: num } }))
+    setLocal(w => ({ ...w, [sec]: { ...w[sec], [key]: num } }))
     setSaved(false)
   }
 
   function getTotal(sec) {
-    return Object.values(weights[sec]).reduce((s, v) => s + (Number(v) || 0), 0)
+    return Object.values(local[sec]).reduce((s, v) => s + (Number(v) || 0), 0)
   }
 
-  function handleSave() {
-    saveWeights(weights)
-    setSaved(true)
-    setTimeout(() => setSaved(false), 2000)
+  async function handleSave() {
+    setSaving(true)
+    try {
+      await updateWeights(local)
+      setSaved(true)
+      showToast('가중치 저장 완료 ✅', 'success')
+      setTimeout(() => setSaved(false), 2000)
+    } catch {
+      showToast('저장 실패', 'error')
+    } finally {
+      setSaving(false)
+    }
   }
 
   function handleReset() {
-    setWeights(DEFAULT_WEIGHTS)
+    setLocal(JSON.parse(JSON.stringify(DEFAULT_WEIGHTS)))
     setSaved(false)
   }
 
@@ -56,13 +67,13 @@ export default function AdminSettings() {
                   <div className="settings-input-wrap">
                     <input type="number" min="0" max="100"
                       className="settings-input"
-                      value={weights[sec][m.key] ?? 0}
+                      value={local[sec][m.key] ?? 0}
                       onChange={e => setWeight(sec, m.key, e.target.value)} />
                     <span className="settings-pct">%</span>
                   </div>
                   <div className="settings-bar-wrap">
                     <div className="settings-bar"
-                      style={{ width: `${weights[sec][m.key] ?? 0}%`, background: m.dir === 'good' ? '#16a34a' : '#dc2626' }} />
+                      style={{ width: `${local[sec][m.key] ?? 0}%`, background: m.dir === 'good' ? '#16a34a' : '#dc2626' }} />
                   </div>
                 </div>
               ))}
@@ -73,8 +84,8 @@ export default function AdminSettings() {
 
       <div className="settings-actions">
         <button className="btn-save" onClick={handleSave}
-          disabled={SECS.some(s => getTotal(s) !== 100)}>
-          {saved ? '✅ 저장됨' : '💾 가중치 저장'}
+          disabled={saving || SECS.some(s => getTotal(s) !== 100)}>
+          {saving ? '저장 중...' : saved ? '✅ 저장됨' : '💾 가중치 저장'}
         </button>
         <button className="settings-btn-reset" onClick={handleReset}>
           기본값으로 초기화
@@ -82,7 +93,7 @@ export default function AdminSettings() {
       </div>
 
       <div className="settings-note">
-        ※ 가중치는 이 기기의 브라우저에 저장됩니다. 앱 재설치 시 초기화됩니다.
+        ※ 가중치는 Supabase에 저장되어 모든 기기에서 동일하게 적용됩니다.
       </div>
     </div>
   )

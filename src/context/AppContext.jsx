@@ -1,6 +1,7 @@
-import { createContext, useContext, useReducer, useCallback } from 'react'
+import { createContext, useContext, useReducer, useCallback, useState, useEffect } from 'react'
 import { initAllHoles } from '../constants'
 import { uploadPhoto } from '../lib/uploadPhoto'
+import { fetchWeights, saveWeights, DEFAULT_WEIGHTS } from '../lib/scoreCalc'
 
 const initialForm = {
   date: new Date().toISOString().slice(0, 10),
@@ -156,6 +157,16 @@ const AppContext = createContext(null)
 
 export function AppProvider({ children }) {
   const [state, dispatch] = useReducer(reducer, initialState)
+  const [weights, setWeightsState] = useState(DEFAULT_WEIGHTS)
+
+  useEffect(() => {
+    fetchWeights().then(w => setWeightsState(w))
+  }, [])
+
+  const updateWeights = useCallback(async (w) => {
+    await saveWeights(w)
+    setWeightsState(w)
+  }, [])
 
   const setForm = useCallback((payload) => dispatch({ type: 'SET_FORM', payload }), [])
   const setHoleCount = useCallback((count) => dispatch({ type: 'SET_HOLE_COUNT', payload: count }), [])
@@ -197,6 +208,7 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       ...state,
+      weights, updateWeights,
       setForm, setHoleCount, activateHole, setHoleScore, setHoleUninspected,
       toggleHoleIssue, setHoleMemo, setHoleDetail, addHolePhotos, removeHolePhoto, resetAll,
       showToast, showLightbox, hideLightbox,

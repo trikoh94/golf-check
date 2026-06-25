@@ -1,7 +1,7 @@
 import { useRef, useState, useEffect } from 'react'
 import { SCORE_META } from '../../constants'
 import { useApp } from '../../context/AppContext'
-import { METRICS, SCORE_METRICS, calcHoleScore, loadWeights } from '../../lib/scoreCalc'
+import { METRICS, SCORE_METRICS, calcHoleScore } from '../../lib/scoreCalc'
 import { uploadPhoto } from '../../lib/uploadPhoto'
 
 const WEED_TYPES = [
@@ -11,10 +11,9 @@ const WEED_TYPES = [
 ]
 
 export default function HolePanel({ sec, holeNum, holeData, onClose }) {
-  const { setHoleDetail, setHoleUninspected, setHoleMemo, addHolePhotos, removeHolePhoto, showLightbox, showToast } = useApp()
+  const { setHoleDetail, setHoleUninspected, setHoleMemo, addHolePhotos, removeHolePhoto, showLightbox, showToast, weights } = useApp()
 
   const { score, detail = {}, weedTypes = {}, memo, photos } = holeData
-  const weights = loadWeights()
 
   const [localDetail, setLocalDetail] = useState({ ...detail })
   const [localWeed, setLocalWeed] = useState({ ...weedTypes })

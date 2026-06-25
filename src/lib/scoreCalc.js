@@ -24,16 +24,31 @@ export const DEFAULT_WEIGHTS = {
   tee:   { colorDensity:20, weedGrass:15, disease:15, compaction:25, repairArea:5,  edgeMgmt:5,  renovation:5,  rootLength:10 },
 }
 
-export function loadWeights() {
+// Supabase 기반 가중치 로드/저장
+import { supabase } from './supabase'
+
+export async function fetchWeights() {
   try {
-    const s = localStorage.getItem('turf_weights_v1')
-    if (s) return JSON.parse(s)
+    const { data, error } = await supabase
+      .from('settings')
+      .select('value')
+      .eq('key', 'score_weights')
+      .single()
+    if (!error && data?.value) return data.value
   } catch {}
   return DEFAULT_WEIGHTS
 }
 
-export function saveWeights(w) {
-  localStorage.setItem('turf_weights_v1', JSON.stringify(w))
+export async function saveWeights(w) {
+  await supabase.from('settings').upsert(
+    { key: 'score_weights', value: w, updated_at: new Date().toISOString() },
+    { onConflict: 'key' }
+  )
+}
+
+// 하위 호환성용 (동기 fallback)
+export function loadWeights() {
+  return DEFAULT_WEIGHTS
 }
 
 /**

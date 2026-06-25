@@ -298,6 +298,10 @@ textarea.form-input { resize: vertical; }
 .ic-memo { font-size: .82rem; color: #374151; background: #f9fafb; border-radius: .35rem; padding: .4rem .6rem; margin-bottom: .4rem; }
 .ic-photos { display: flex; gap: .4rem; flex-wrap: wrap; }
 .ic-photo { width: 100%; max-width: 280px; border-radius: .4rem; object-fit: cover; cursor: pointer; }
+.ic-detail-metrics { display: flex; flex-direction: column; gap: .2rem; background: #f9fafb; border-radius: .4rem; padding: .4rem .6rem; margin-bottom: .4rem; }
+.ic-metric-row { display: flex; align-items: center; justify-content: space-between; font-size: .78rem; }
+.ic-metric-label { color: #6b7280; }
+.ic-metric-val { font-size: .78rem; color: #374151; }
 
 /* 메모, 푸터 */
 .report-memo { background: #fff; border-radius: .5rem; padding: .85rem 1rem; font-size: .88rem; line-height: 1.6; color: #374151; margin: 0 0 .5rem; }
