@@ -9,25 +9,15 @@ export default function BasicInfo() {
   const [weatherLoading, setWeatherLoading] = useState(false)
   const [weatherDetail, setWeatherDetail] = useState(null)
   const [weatherError, setWeatherError] = useState(null)
-  const [debugRaw, setDebugRaw] = useState(null)
 
   async function fetchWeather() {
     setWeatherLoading(true)
     setWeatherError(null)
-    setDebugRaw(null)
     setWeatherDetail(null)
     try {
       const res = await fetch('/api/weather', { cache: 'no-store' })
       const data = await res.json()
-
-      // 디버그 구조 확인용
-      if (data.debug) {
-        setDebugRaw(JSON.stringify(data.structure, null, 2))
-        setWeatherLoading(false)
-        return
-      }
-
-      if (data.error) throw new Error(`${data.error} | ${data.raw ?? ''}`)
+      if (data.error) throw new Error(data.error)
       setForm({ weather: data.label })
       setWeatherDetail(data)
     } catch (e) {
@@ -79,30 +69,24 @@ export default function BasicInfo() {
             <div className="weather-card">
               <div className="wc-main">
                 <span className="wc-label">{weatherDetail.label}</span>
-                {weatherDetail.temp && <span className="wc-temp">{weatherDetail.temp}</span>}
+                <span className="wc-temp">{weatherDetail.temp}</span>
               </div>
               <div className="wc-chips">
-                {weatherDetail.humidity  && <span className="wc-chip">💧 습도 {weatherDetail.humidity}</span>}
-                {weatherDetail.wind      && <span className="wc-chip">💨 풍속 {weatherDetail.wind}</span>}
-                {weatherDetail.dewPoint  && <span className="wc-chip">🌡 이슬점 {weatherDetail.dewPoint}</span>}
-                {weatherDetail.groundTemp && <span className="wc-chip">🌿 지면온도 {weatherDetail.groundTemp}</span>}
-                {weatherDetail.soilTemp5 && <span className="wc-chip">🪱 지중5cm {weatherDetail.soilTemp5}</span>}
-                {weatherDetail.rain      && <span className="wc-chip rain">🌧 강수 {weatherDetail.rain}</span>}
+                {weatherDetail.humidity    && <span className="wc-chip">💧 습도 {weatherDetail.humidity}</span>}
+                {weatherDetail.wind        && <span className="wc-chip">💨 풍속 {weatherDetail.wind}</span>}
+                {weatherDetail.dewPoint    && <span className="wc-chip">🌡 이슬점 {weatherDetail.dewPoint}</span>}
+                {weatherDetail.surfaceTemp && <span className="wc-chip">🌿 지표면 {weatherDetail.surfaceTemp}</span>}
+                {weatherDetail.soilTemp0   && <span className="wc-chip">🪱 토양0cm {weatherDetail.soilTemp0}</span>}
+                {weatherDetail.soilTemp6   && <span className="wc-chip">🪱 토양6cm {weatherDetail.soilTemp6}</span>}
+                {weatherDetail.soilTemp18  && <span className="wc-chip">🪱 토양18cm {weatherDetail.soilTemp18}</span>}
+                {weatherDetail.rain        && <span className="wc-chip rain">🌧 강수 {weatherDetail.rain}</span>}
               </div>
               {weatherDetail.warnings?.length > 0 && (
                 <div className="wc-warnings">
-                  {weatherDetail.warnings.map((w, i) => (
-                    <div key={i} className="wc-warning">{w}</div>
-                  ))}
+                  {weatherDetail.warnings.map((w, i) => <div key={i} className="wc-warning">{w}</div>)}
                 </div>
               )}
             </div>
-          )}
-
-          {debugRaw && (
-            <pre style={{ fontSize: '.68rem', background: '#f3f4f6', padding: '.5rem', borderRadius: '.4rem', overflow: 'auto', maxHeight: '160px' }}>
-              {debugRaw}
-            </pre>
           )}
 
           {weatherError && <div className="weather-error">⚠️ {weatherError}</div>}
@@ -112,7 +96,7 @@ export default function BasicInfo() {
             {WEATHER_OPTIONS.map(w => (
               <button key={w}
                 className={'btn-option' + (formData.weather === w ? ' active' : '')}
-                onClick={() => { setForm({ weather: formData.weather === w ? '' : w }); setWeatherDetail(null); setDebugRaw(null) }}>
+                onClick={() => { setForm({ weather: formData.weather === w ? '' : w }); setWeatherDetail(null) }}>
                 {w}
               </button>
             ))}
