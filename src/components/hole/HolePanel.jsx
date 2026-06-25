@@ -13,7 +13,7 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
   const issueOptions = SECTION_ISSUES[sec]
 
   async function handleFileChange(e) {
-    const files = Array.from(e.target.files).slice(0, 3 - photos.length)
+    const files = Array.from(e.target.files)
     if (!files.length) return
     setUploading(true)
     try {
@@ -103,7 +103,7 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
             <div className="hps-photo-uploading">⏳</div>
           )}
 
-          {photos.length < 3 && !uninspected && !uploading && (
+          {!uninspected && !uploading && (
             <button className="hps-photo-add" onClick={() => fileRef.current?.click()}>
               📷
             </button>

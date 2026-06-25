@@ -38,6 +38,7 @@ export default function WorkerView() {
   const [modal, setModal] = useState(null)
   const [form, setForm] = useState({ workType: '', memo: '', inspector: '', photos: [] })
   const [saving, setSaving] = useState(false)
+  const [photoUploading, setPhotoUploading] = useState(false)
 
   // 수정 모달
   const [editTarget, setEditTarget] = useState(null)
@@ -101,18 +102,23 @@ export default function WorkerView() {
 
   async function handleAddPhoto(e, target) {
     const files = Array.from(e.target.files)
+    if (!files.length) return
+    setPhotoUploading(true)
     const urls = []
     for (const f of files) {
       try {
-        const url = await uploadPhoto(f, 'work-photos', `${selectedDate}/${modal?.section ?? editTarget?.section ?? 'misc'}`)
+        const sec = target === 'edit' ? editTarget?.section : modal?.section
+        const url = await uploadPhoto(f, 'work-photos', `${selectedDate}/${sec ?? 'misc'}`)
         urls.push(url)
       } catch (err) {
         alert('사진 업로드 실패: ' + err.message)
       }
     }
+    setPhotoUploading(false)
     if (!urls.length) return
     if (target === 'edit') setEditForm(f => ({ ...f, photos: [...(f.photos??[]), ...urls] }))
     else setForm(f => ({ ...f, photos: [...f.photos, ...urls] }))
+    e.target.value = ''
   }
 
   async function saveLog() {
@@ -350,7 +356,9 @@ export default function WorkerView() {
               <textarea className="form-input" rows={3}
                 placeholder="예: 원형 반점 확인, 달러스팟 의심 → 살균제 살포"
                 value={form.memo} onChange={e => setForm(f=>({...f, memo:e.target.value}))} />
-              <div className="wm-label">사진 첨부</div>
+              <div className="wm-label">
+                사진 첨부 {form.photos.length > 0 && `(${form.photos.length}장)`}
+              </div>
               <div className="wm-photo-area">
                 {form.photos.map((p, i) => (
                   <div key={i} className="wm-photo-wrap">
@@ -359,12 +367,17 @@ export default function WorkerView() {
                       onClick={() => setForm(f=>({...f, photos:f.photos.filter((_,j)=>j!==i)}))}>✕</button>
                   </div>
                 ))}
-                <button className="wm-photo-add" onClick={() => photoRef.current.click()}>📷 사진 추가</button>
+                {photoUploading && (
+                  <div className="hps-photo-uploading">⏳</div>
+                )}
+                {!photoUploading && (
+                  <button className="wm-photo-add" onClick={() => photoRef.current.click()}>📷 추가</button>
+                )}
                 <input ref={photoRef} type="file" accept="image/*" multiple capture="environment"
                   style={{display:'none'}} onChange={e => handleAddPhoto(e, 'new')} />
               </div>
-              <button className="btn-save" disabled={!form.workType||saving} onClick={saveLog}>
-                {saving ? '저장 중...' : '💾 기록 저장'}
+              <button className="btn-save" disabled={!form.workType || saving || photoUploading} onClick={saveLog}>
+                {photoUploading ? '📷 업로드 중...' : saving ? '저장 중...' : '💾 기록 저장'}
               </button>
             </div>
           </div>
