@@ -250,6 +250,7 @@ textarea.form-input { resize: vertical; }
   position: sticky; top: 90px; z-index: 80;
 }
 .btn-back { background: none; border: none; font-size: .9rem; color: #1a3d2b; font-weight: 600; cursor: pointer; }
+.btn-excel { background: #16a34a; color: #fff; border: none; border-radius: .4rem; padding: .3rem .7rem; font-size: .78rem; font-weight: 600; cursor: pointer; }
 .report-id { font-size: .78rem; color: #9ca3af; }
 
 .report-header {

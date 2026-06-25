@@ -2,12 +2,14 @@ import { useEffect, useState } from 'react'
 import { supabase } from '../../lib/supabase'
 import { SCORE_META, SEC_KEYS, SEC_NAME, SEC_EMOJI } from '../../constants'
 import { METRICS, SCORE_METRICS } from '../../lib/scoreCalc'
+import { exportInspectionExcel, exportPhotosZip } from '../../lib/exportExcel'
 
 const METRIC_MAP = Object.fromEntries(METRICS.map(m => [m.key, m]))
 
 export default function RecordDetail({ id, onBack }) {
   const [rec, setRec] = useState(null)
   const [loading, setLoading] = useState(true)
+  const [zipping, setZipping] = useState(false)
 
   useEffect(() => {
     supabase.from('inspections').select('*').eq('id', id).single()
@@ -47,7 +49,19 @@ export default function RecordDetail({ id, onBack }) {
     <div className="report">
       <div className="report-topbar">
         <button className="btn-back" onClick={onBack}>← 목록</button>
-        <span className="report-id">점검 #{rec.id}</span>
+        <div style={{ display: 'flex', alignItems: 'center', gap: '.4rem' }}>
+          <button className="btn-excel" onClick={() => exportInspectionExcel(rec)}>📊 엑셀</button>
+          <button className="btn-excel" style={{ background: '#0284c7' }} disabled={zipping}
+            onClick={async () => {
+              setZipping(true)
+              const n = await exportPhotosZip(rec)
+              setZipping(false)
+              if (n === 0) alert('다운로드할 사진이 없습니다.')
+            }}>
+            {zipping ? '⏳' : '🖼️ 사진ZIP'}
+          </button>
+          <span className="report-id">점검 #{rec.id}</span>
+        </div>
       </div>
 
       <div className="report-header">
