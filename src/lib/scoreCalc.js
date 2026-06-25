@@ -1,3 +1,5 @@
+import { supabase } from './supabase'
+
 /**
  * 홀별 세부 항목 점수 → 종합점수 계산
  * dir: 'good' = 높을수록 좋음 / 'bad' = 높을수록 나쁨
@@ -15,7 +17,6 @@ export const METRICS = [
   { key: 'greenSpeed',   label: '그린스피드', emoji: '⚡', dir: 'info', sections: ['green'], unit: 'ft' },
 ]
 
-// 가중치 계산에 포함되는 항목 (moisture, greenSpeed 제외)
 export const SCORE_METRICS = METRICS.filter(m => m.dir === 'good' || m.dir === 'bad')
 
 export const DEFAULT_WEIGHTS = {
@@ -23,9 +24,6 @@ export const DEFAULT_WEIGHTS = {
   fw:    { colorDensity:20, weedGrass:15, disease:15, compaction:20, repairArea:10, edgeMgmt:5,  renovation:5,  rootLength:10 },
   tee:   { colorDensity:20, weedGrass:15, disease:15, compaction:25, repairArea:5,  edgeMgmt:5,  renovation:5,  rootLength:10 },
 }
-
-// Supabase 기반 가중치 로드/저장
-import { supabase } from './supabase'
 
 export async function fetchWeights() {
   try {
@@ -46,17 +44,13 @@ export async function saveWeights(w) {
   )
 }
 
-// 하위 호환성용 (동기 fallback)
 export function loadWeights() {
   return DEFAULT_WEIGHTS
 }
 
-/**
- * detail 객체 + 섹션 + 가중치 → 1~9 종합점수
- */
 export function calcHoleScore(detail, sec, weights) {
   if (!detail || Object.keys(detail).length === 0) return null
-  const w = (weights ?? loadWeights())[sec] ?? DEFAULT_WEIGHTS[sec]
+  const w = (weights ?? DEFAULT_WEIGHTS)[sec] ?? DEFAULT_WEIGHTS[sec]
 
   let total = 0, totalW = 0
   SCORE_METRICS.filter(m => m.sections.includes(sec)).forEach(m => {
@@ -70,5 +64,5 @@ export function calcHoleScore(detail, sec, weights) {
   })
 
   if (!totalW) return null
-  return Math.round((total / totalW) * 8 + 1)  // 0~1 → 1~9
+  return Math.round((total / totalW) * 8 + 1)
 }
