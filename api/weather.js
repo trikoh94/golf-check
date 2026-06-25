@@ -8,11 +8,10 @@ export default async function handler(req, res) {
   let baseHour = now.getUTCHours()
   const min = now.getUTCMinutes()
 
-  // 40분 이전이면 한 시간 전 데이터 사용
   if (min < 40) {
     if (baseHour === 0) {
       baseHour = 23
-      const yesterday = new Date(now - 24 * 60 * 60 * 1000)
+      const yesterday = new Date(now - 24*60*60*1000)
       baseDate = `${yesterday.getUTCFullYear()}${pad(yesterday.getUTCMonth()+1)}${pad(yesterday.getUTCDate())}`
     } else {
       baseHour -= 1
@@ -20,26 +19,27 @@ export default async function handler(req, res) {
   }
   const baseTime = pad(baseHour) + '00'
 
-  const params = new URLSearchParams({
-    serviceKey: 'YX_4QuEtSFm_-ELhLRhZqQ',
-    pageNo: '1',
-    numOfRows: '10',
-    dataType: 'JSON',
-    base_date: baseDate,
-    base_time: baseTime,
-    nx: '51',
-    ny: '56',
-  })
-
-  const url = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst?${params}`
+  // serviceKey는 URL에 직접 삽입 (URLSearchParams 이중인코딩 방지)
+  const KEY = 'YX_4QuEtSFm_-ELhLRhZqQ'
+  const url = `http://apis.data.go.kr/1360000/VilageFcstInfoService_2.0/getUltraSrtNcst`
+    + `?serviceKey=${KEY}`
+    + `&pageNo=1&numOfRows=10&dataType=JSON`
+    + `&base_date=${baseDate}&base_time=${baseTime}`
+    + `&nx=51&ny=56`
 
   try {
     const response = await fetch(url)
     const text = await response.text()
 
     let data
-    try { data = JSON.parse(text) } catch {
-      return res.status(200).json({ error: '응답 파싱 실패', raw: text.slice(0, 200) })
+    try { data = JSON.parse(text) }
+    catch { return res.status(200).json({ error: 'parse_fail', raw: text.slice(0, 300) }) }
+
+    const resultCode = data?.response?.header?.resultCode
+    if (resultCode !== '00') {
+      return res.status(200).json({
+        error: `기상청 오류: ${data?.response?.header?.resultMsg ?? resultCode}`
+      })
     }
 
     const items = data?.response?.body?.items?.item || []
@@ -51,8 +51,7 @@ export default async function handler(req, res) {
     const reh = get('REH')
     const rn1 = get('RN1')
 
-    let weatherText = '맑음'
-    let emoji = '☀️'
+    let weatherText = '맑음', emoji = '☀️'
     if (pty === 1) { weatherText = '비'; emoji = '🌧️' }
     else if (pty === 2) { weatherText = '비/눈'; emoji = '🌧️' }
     else if (pty === 3) { weatherText = '눈'; emoji = '❄️' }
@@ -65,8 +64,7 @@ export default async function handler(req, res) {
       humidity: reh ? `${reh}%` : null,
       wind: wsd ? `${wsd}m/s` : null,
       rain: rn1 && Number(rn1) > 0 ? `${rn1}mm` : null,
-      baseDate,
-      baseTime,
+      baseDate, baseTime,
     })
   } catch (e) {
     res.status(500).json({ error: e.message })
