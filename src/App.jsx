@@ -7,7 +7,7 @@ import NewRecord from './pages/NewRecord'
 import RecordList from './pages/RecordList'
 import RecordDetail from './pages/RecordDetail'
 import MapView from './pages/MapView'
-import WorkLog from './pages/WorkLog'
+import WorkCheck from './pages/WorkCheck'
 import WorkerView from './pages/WorkerView'
 
 // URL 기반 역할 분리: /worker → 직원 뷰, 그 외 → 관리자
@@ -46,8 +46,8 @@ function AppInner() {
         {tab === 'new'  && <NewRecord onSaved={() => handleTabChange('list')} />}
         {tab === 'list' && !selectedId && <RecordList onSelect={id => setSelectedId(id)} />}
         {tab === 'list' && selectedId  && <RecordDetail id={selectedId} onBack={() => setSelectedId(null)} />}
-        {tab === 'map'  && <MapView />}
-        {tab === 'work' && <WorkLog />}
+        {tab === 'map'       && <MapView />}
+        {tab === 'workcheck' && <WorkCheck />}
       </main>
       <Toast />
       <Lightbox />

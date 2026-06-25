@@ -1,9 +1,9 @@
 export default function Header({ tab, onTabChange }) {
   const tabs = [
-    { key: 'new',  label: '✏️ 점검' },
-    { key: 'list', label: '📋 기록' },
-    { key: 'work', label: '🔧 작업' },
-    { key: 'map',  label: '🗺️ 지도' },
+    { key: 'new',       label: '✏️ 점검' },
+    { key: 'list',      label: '📋 기록' },
+    { key: 'workcheck', label: '✅ 작업확인' },
+    { key: 'map',       label: '🗺️ 지도' },
   ]
   return (
     <header className="app-header">

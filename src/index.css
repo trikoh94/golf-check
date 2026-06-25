@@ -642,3 +642,80 @@ textarea.form-input { resize: vertical; }
   text-align: center; padding: 2rem 1rem;
   color: #9ca3af; font-size: .88rem; line-height: 1.6;
 }
+
+/* ── Worker Hole Grid ── */
+.worker-hole-row { display: flex; align-items: center; gap: .75rem; margin-bottom: 1rem; }
+.worker-hole-label { font-size: .82rem; color: #6b7280; white-space: nowrap; }
+
+.worker-holes-section { margin-bottom: 1.2rem; }
+.worker-holes-section h3 { font-size: .95rem; font-weight: 700; margin-bottom: .5rem; }
+.worker-holes-hint { font-size: .78rem; color: #9ca3af; margin-bottom: .75rem; }
+
+.worker-sec-block { margin-bottom: .85rem; }
+.worker-sec-title { font-size: .78rem; font-weight: 600; color: #6b7280; margin-bottom: .35rem; }
+.worker-hole-grid { display: grid; grid-template-columns: repeat(6, 1fr); gap: .3rem; }
+
+.worker-hole-btn {
+  aspect-ratio: 1; border-radius: 8px; border: 1.5px solid #e5e7eb;
+  background: #f9fafb; display: flex; flex-direction: column;
+  align-items: center; justify-content: center; gap: 1px;
+  font-size: .75rem; cursor: pointer; position: relative; padding: 0;
+}
+.worker-hole-btn.at-risk { background: #fff9f0; border-width: 2px; }
+.worker-hole-btn.logged { background: #f0fdf4; }
+.whb-num { font-weight: 700; font-size: .82rem; }
+.whb-risk { font-size: .65rem; line-height: 1; }
+.whb-logged { font-size: .6rem; color: #16a34a; font-weight: 700; }
+
+/* Worker Today Logs */
+.worker-today-logs { margin-bottom: 1.2rem; }
+.worker-today-logs h3 { font-size: .95rem; font-weight: 700; margin-bottom: .5rem; }
+.worker-log-list { display: flex; flex-direction: column; gap: .4rem; }
+.worker-log-item {
+  background: #f9fafb; border: 1px solid #e5e7eb;
+  border-radius: 10px; padding: .6rem .85rem;
+}
+.wli-top { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .15rem; }
+.wli-hole { font-weight: 700; font-size: .88rem; }
+.wli-sec { font-size: .78rem; color: #6b7280; }
+.wli-type { font-size: .8rem; background: #e0f2fe; color: #0369a1; padding: .1rem .4rem; border-radius: 4px; }
+.wli-who { font-size: .75rem; color: #9ca3af; }
+.wli-disease { font-size: .75rem; color: #dc2626; margin-bottom: .1rem; }
+.wli-memo { font-size: .82rem; color: #374151; margin-bottom: .15rem; }
+.wli-time { font-size: .7rem; color: #9ca3af; text-align: right; }
+
+/* Worker Modal (inside bottom sheet) */
+.worker-modal { padding: .5rem .25rem 1rem; }
+.worker-modal-title {
+  font-size: 1rem; font-weight: 700; margin-bottom: 1rem;
+  display: flex; align-items: center; gap: .5rem;
+}
+.wm-disease-badge {
+  font-size: .72rem; background: #fef3c7; color: #92400e;
+  padding: .15rem .45rem; border-radius: 4px; font-weight: 600;
+}
+.wm-label { font-size: .8rem; font-weight: 600; color: #374151; margin: .75rem 0 .35rem; }
+.wm-type-grid { display: grid; grid-template-columns: repeat(2, 1fr); gap: .35rem; margin-bottom: .25rem; }
+.wm-type-btn {
+  padding: .5rem .4rem; border-radius: 8px; border: 1.5px solid #e5e7eb;
+  background: #f9fafb; font-size: .8rem; cursor: pointer; text-align: left;
+}
+.wm-type-btn.active { border-color: #3b82f6; background: #eff6ff; color: #1d4ed8; font-weight: 600; }
+
+/* ── WorkCheck ── */
+.wc-filters { display: flex; align-items: center; gap: .5rem; flex-wrap: wrap; margin-bottom: .75rem; }
+.wc-summary { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .75rem; }
+.wc-total { font-size: .82rem; font-weight: 700; color: #374151; }
+.wc-chip { font-size: .75rem; background: #f3f4f6; border: 1px solid #e5e7eb; padding: .15rem .5rem; border-radius: 99px; }
+.wc-empty { text-align: center; color: #9ca3af; padding: 2rem; font-size: .88rem; }
+.wc-log-list { display: flex; flex-direction: column; gap: .5rem; }
+.wc-log-item { background: #f9fafb; border: 1px solid #e5e7eb; border-radius: 10px; padding: .65rem .9rem; }
+.wcl-top { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; margin-bottom: .2rem; }
+.wcl-hole { font-weight: 700; font-size: .9rem; }
+.wcl-sec { font-size: .78rem; color: #6b7280; }
+.wcl-type { font-size: .78rem; background: #e0f2fe; color: #0369a1; padding: .1rem .4rem; border-radius: 4px; }
+.wcl-who { font-size: .75rem; color: #9ca3af; }
+.wcl-time { font-size: .72rem; color: #9ca3af; margin-left: auto; }
+.wcl-disease { font-size: .76rem; color: #b45309; margin-bottom: .15rem; }
+.wcl-risks { font-size: .73rem; color: #6b7280; margin-bottom: .1rem; }
+.wcl-memo { font-size: .82rem; color: #374151; font-style: italic; }
