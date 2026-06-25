@@ -12,7 +12,7 @@ export default function NewRecord({ onSaved }) {
   function getBadge(tab) {
     if (!SEC_KEYS.includes(tab)) return 0
     return Object.values(holeState[tab]).filter(
-      h => h.score !== null && (h.score !== 5 || h.issues.length > 0)
+      h => h.score !== null && (h.score !== 5 || (h.issues?.length ?? 0) > 0)
     ).length
   }
 

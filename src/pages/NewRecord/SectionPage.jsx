@@ -6,7 +6,7 @@ export default function SectionPage({ sec }) {
   const { holeState } = useApp()
   const holes = holeState[sec]
   const inspectedCount = Object.values(holes).filter(h => h.score !== null).length
-  const issueCount = Object.values(holes).filter(h => h.score !== null && (h.score !== 5 || h.issues.length > 0)).length
+  const issueCount = Object.values(holes).filter(h => h.score !== null && (h.score !== 5 || (h.issues?.length ?? 0) > 0)).length
 
   return (
     <div className="page-section">
