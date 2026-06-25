@@ -49,7 +49,8 @@ export default function RecordDetail({ id, onBack }) {
         <div className="report-meta-grid">
           <div className="meta-item"><span>점검일</span><strong>{rec.date}</strong></div>
           <div className="meta-item"><span>점검자</span><strong>{rec.inspector}</strong></div>
-          <div className="meta-item"><span>날씨</span><strong>{rec.weather || '—'}</strong></div>
+          <div className="meta-item"><span>날씨</span><strong>{rec.weather || '—'}{rec.temperature != null ? ` / ${rec.temperature}°C` : ''}</strong></div>
+          {rec.soil_temp_0 != null && <div className="meta-item"><span>토양온도</span><strong>0cm: {rec.soil_temp_0}°C{rec.soil_temp_6 != null ? ` / 6cm: ${rec.soil_temp_6}°C` : ''}</strong></div>}
           <div className="meta-item"><span>홀 수</span><strong>{rec.hole_count}홀</strong></div>
           {rec.next_visit && <div className="meta-item"><span>다음 점검</span><strong>{rec.next_visit}</strong></div>}
         </div>

@@ -16,11 +16,13 @@ export default function SummaryPage({ onSaved }) {
   }
 
   async function handleSave() {
-    const { date, club, course, inspector, weather, nextVisit, memo, holeCount } = formData
+    const { date, club, course, inspector, weather, weatherDetail, nextVisit, memo, holeCount } = formData
     if (!date || !inspector) {
       showToast('점검일자와 점검자는 필수입니다', 'error')
       return
     }
+
+    const parseNum = v => v ? parseFloat(v) : null
 
     const payload = {
       date,
@@ -28,23 +30,31 @@ export default function SummaryPage({ onSaved }) {
       course: course || null,
       inspector,
       weather: weather || null,
+      temperature:  parseNum(weatherDetail?.temp),
+      humidity:     parseNum(weatherDetail?.humidity),
+      wind_speed:   parseNum(weatherDetail?.wind),
+      dew_point:    parseNum(weatherDetail?.dewPoint),
+      surface_temp: parseNum(weatherDetail?.surfaceTemp),
+      soil_temp_0:  parseNum(weatherDetail?.soilTemp0),
+      soil_temp_6:  parseNum(weatherDetail?.soilTemp6),
       next_visit: nextVisit || null,
       memo: memo || null,
       hole_count: holeCount,
-      tee: holeState.tee,
+      tee:     holeState.tee,
       fairway: holeState.fw,
-      green: holeState.green,
+      green:   holeState.green,
     }
 
     const { error } = await supabase.from('inspections').insert([payload])
     if (error) {
-      console.error(error)
       showToast('저장 실패: ' + error.message, 'error')
     } else {
       showToast('저장 완료!', 'success')
       setTimeout(() => { resetAll(); onSaved?.() }, 800)
     }
   }
+
+  const wd = formData.weatherDetail
 
   return (
     <div className="page-section">
@@ -55,7 +65,18 @@ export default function SummaryPage({ onSaved }) {
         <div className="info-row"><span>골프장</span><strong>{formData.club}</strong></div>
         <div className="info-row"><span>코스</span><strong>{formData.course || '—'}</strong></div>
         <div className="info-row"><span>점검자</span><strong>{formData.inspector || '—'}</strong></div>
-        <div className="info-row"><span>날씨</span><strong>{formData.weather || '—'}</strong></div>
+        <div className="info-row">
+          <span>날씨</span>
+          <strong>
+            {wd ? `${wd.label} ${wd.temp ?? ''}` : formData.weather || '—'}
+          </strong>
+        </div>
+        {wd && (
+          <div className="info-row">
+            <span>토양온도</span>
+            <strong>{[wd.soilTemp0 && `0cm:${wd.soilTemp0}`, wd.soilTemp6 && `6cm:${wd.soilTemp6}`].filter(Boolean).join(' / ') || '—'}</strong>
+          </div>
+        )}
       </div>
 
       <div className="summary-cards">
@@ -72,24 +93,17 @@ export default function SummaryPage({ onSaved }) {
                   <div className="summary-label">{meta.label}</div>
                   {uninspected > 0 && <div className="summary-uninspected">미점검 {uninspected}홀</div>}
                 </>
-              ) : (
-                <div className="summary-no-data">미점검</div>
-              )}
+              ) : <div className="summary-no-data">미점검</div>}
             </div>
           )
         })}
       </div>
 
       {formData.memo && (
-        <div className="summary-memo">
-          <strong>메모</strong>
-          <p>{formData.memo}</p>
-        </div>
+        <div className="summary-memo"><strong>메모</strong><p>{formData.memo}</p></div>
       )}
 
-      <button className="btn-save" onClick={handleSave}>
-        💾 저장하기
-      </button>
+      <button className="btn-save" onClick={handleSave}>💾 저장하기</button>
     </div>
   )
 }

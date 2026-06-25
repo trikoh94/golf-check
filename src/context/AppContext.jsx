@@ -1,18 +1,13 @@
 import { createContext, useContext, useReducer, useCallback } from 'react'
 import { initAllHoles, compressImage } from '../constants'
 
-// ─── State shape ────────────────────────────────────────────────
-// formData: { date, club, course, inspector, weather, nextVisit, memo, holeCount }
-// holeState: { tee: { [holeNum]: HoleState }, fw: ..., green: ... }
-//   HoleState: { score: null|1-9, issues: string[], memo: string, photos: [{dataUrl, name}] }
-// ui: { toast: null|{msg, type}, lightbox: null|{photos, index} }
-
 const initialForm = {
   date: new Date().toISOString().slice(0, 10),
   club: '해남 파인트리 골프장',
   course: '',
   inspector: '',
   weather: '',
+  weatherDetail: null, // { temp, humidity, wind, dewPoint, surfaceTemp, soilTemp0, soilTemp6 }
   nextVisit: '',
   memo: '',
   holeCount: 18,
@@ -33,7 +28,6 @@ const initialState = {
   lightbox: null,
 }
 
-// ─── Reducer ────────────────────────────────────────────────────
 function reducer(state, action) {
   switch (action.type) {
     case 'SET_FORM':
@@ -55,10 +49,7 @@ function reducer(state, action) {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: {
-            ...state.holeState[sec],
-            [hole]: { ...state.holeState[sec][hole], score: 5 },
-          },
+          [sec]: { ...state.holeState[sec], [hole]: { ...state.holeState[sec][hole], score: 5 } },
         },
       }
     }
@@ -69,10 +60,7 @@ function reducer(state, action) {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: {
-            ...state.holeState[sec],
-            [hole]: { ...state.holeState[sec][hole], score },
-          },
+          [sec]: { ...state.holeState[sec], [hole]: { ...state.holeState[sec][hole], score } },
         },
       }
     }
@@ -83,10 +71,7 @@ function reducer(state, action) {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: {
-            ...state.holeState[sec],
-            [hole]: { score: null, issues: [], memo: '', photos: [] },
-          },
+          [sec]: { ...state.holeState[sec], [hole]: { score: null, issues: [], memo: '', photos: [] } },
         },
       }
     }
@@ -94,17 +79,12 @@ function reducer(state, action) {
     case 'TOGGLE_HOLE_ISSUE': {
       const { sec, hole, issue } = action.payload
       const current = state.holeState[sec][hole].issues
-      const next = current.includes(issue)
-        ? current.filter((i) => i !== issue)
-        : [...current, issue]
+      const next = current.includes(issue) ? current.filter(i => i !== issue) : [...current, issue]
       return {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: {
-            ...state.holeState[sec],
-            [hole]: { ...state.holeState[sec][hole], issues: next },
-          },
+          [sec]: { ...state.holeState[sec], [hole]: { ...state.holeState[sec][hole], issues: next } },
         },
       }
     }
@@ -115,26 +95,19 @@ function reducer(state, action) {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: {
-            ...state.holeState[sec],
-            [hole]: { ...state.holeState[sec][hole], memo },
-          },
+          [sec]: { ...state.holeState[sec], [hole]: { ...state.holeState[sec][hole], memo } },
         },
       }
     }
 
     case 'ADD_HOLE_PHOTOS': {
       const { sec, hole, photos } = action.payload
-      const existing = state.holeState[sec][hole].photos
-      const merged = [...existing, ...photos].slice(0, 2)
+      const merged = [...state.holeState[sec][hole].photos, ...photos].slice(0, 2)
       return {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: {
-            ...state.holeState[sec],
-            [hole]: { ...state.holeState[sec][hole], photos: merged },
-          },
+          [sec]: { ...state.holeState[sec], [hole]: { ...state.holeState[sec][hole], photos: merged } },
         },
       }
     }
@@ -146,10 +119,7 @@ function reducer(state, action) {
         ...state,
         holeState: {
           ...state.holeState,
-          [sec]: {
-            ...state.holeState[sec],
-            [hole]: { ...state.holeState[sec][hole], photos },
-          },
+          [sec]: { ...state.holeState[sec], [hole]: { ...state.holeState[sec][hole], photos } },
         },
       }
     }
@@ -157,28 +127,19 @@ function reducer(state, action) {
     case 'RESET_ALL':
       return {
         ...initialState,
-        formData: {
-          ...initialForm,
-          date: new Date().toISOString().slice(0, 10),
-        },
+        formData: { ...initialForm, date: new Date().toISOString().slice(0, 10) },
         holeState: makeHoleState(18),
       }
 
-    case 'SHOW_TOAST':
-      return { ...state, toast: action.payload }
-    case 'HIDE_TOAST':
-      return { ...state, toast: null }
-    case 'SHOW_LIGHTBOX':
-      return { ...state, lightbox: action.payload }
-    case 'HIDE_LIGHTBOX':
-      return { ...state, lightbox: null }
+    case 'SHOW_TOAST': return { ...state, toast: action.payload }
+    case 'HIDE_TOAST':  return { ...state, toast: null }
+    case 'SHOW_LIGHTBOX': return { ...state, lightbox: action.payload }
+    case 'HIDE_LIGHTBOX': return { ...state, lightbox: null }
 
-    default:
-      return state
+    default: return state
   }
 }
 
-// ─── Context ────────────────────────────────────────────────────
 const AppContext = createContext(null)
 
 export function AppProvider({ children }) {
@@ -197,10 +158,7 @@ export function AppProvider({ children }) {
     const results = []
     for (const file of files) {
       const reader = new FileReader()
-      const dataUrl = await new Promise((res) => {
-        reader.onload = (e) => res(e.target.result)
-        reader.readAsDataURL(file)
-      })
+      const dataUrl = await new Promise(res => { reader.onload = e => res(e.target.result); reader.readAsDataURL(file) })
       const compressed = await compressImage(dataUrl)
       results.push({ dataUrl: compressed, name: file.name })
     }
@@ -222,19 +180,9 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       ...state,
-      setForm,
-      setHoleCount,
-      activateHole,
-      setHoleScore,
-      setHoleUninspected,
-      toggleHoleIssue,
-      setHoleMemo,
-      addHolePhotos,
-      removeHolePhoto,
-      resetAll,
-      showToast,
-      showLightbox,
-      hideLightbox,
+      setForm, setHoleCount, activateHole, setHoleScore, setHoleUninspected,
+      toggleHoleIssue, setHoleMemo, addHolePhotos, removeHolePhoto, resetAll,
+      showToast, showLightbox, hideLightbox,
     }}>
       {children}
     </AppContext.Provider>

@@ -495,3 +495,4 @@ textarea.form-input { resize: vertical; }
 .wc-chip.rain { background: #dbeafe; color: #1d4ed8; }
 .wc-warnings { display: flex; flex-direction: column; gap: .25rem; border-top: 1px solid #bae6fd; padding-top: .4rem; }
 .wc-warning { font-size: .78rem; color: #92400e; background: #fffbeb; border-radius: .35rem; padding: .2rem .5rem; }
+.wc-reset { background: none; border: none; color: #0369a1; font-size: .75rem; cursor: pointer; text-decoration: underline; margin-top: .3rem; }
