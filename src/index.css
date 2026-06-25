@@ -461,3 +461,20 @@ textarea.form-input { resize: vertical; }
   width: 100%; padding: .45rem; border: 1.5px solid #e5e7eb; border-radius: .4rem;
   background: #fff; color: #9ca3af; font-size: .78rem; cursor: pointer;
 }
+
+/* ─── Weather ────────────────────────────────────────────── */
+.weather-section { display: flex; flex-direction: column; gap: .5rem; }
+.btn-weather-fetch {
+  padding: .55rem .85rem; background: #0ea5e9; color: #fff; border: none;
+  border-radius: .5rem; font-size: .85rem; font-weight: 600; cursor: pointer;
+}
+.btn-weather-fetch.loading { background: #6b7280; }
+.weather-detail {
+  display: flex; flex-wrap: wrap; align-items: center; gap: .35rem;
+  background: #f0f9ff; border: 1px solid #bae6fd; border-radius: .5rem; padding: .5rem .75rem;
+}
+.wd-main { font-weight: 700; font-size: .9rem; color: #0369a1; }
+.wd-chip { font-size: .75rem; background: #e0f2fe; color: #0369a1; border-radius: 999px; padding: .15rem .5rem; }
+.weather-error { font-size: .78rem; color: #dc2626; background: #fef2f2; border-radius: .4rem; padding: .4rem .6rem; }
+.weather-manual-label { font-size: .75rem; color: #9ca3af; font-weight: 500; }
+.weather-selected { font-size: .8rem; color: #374151; }

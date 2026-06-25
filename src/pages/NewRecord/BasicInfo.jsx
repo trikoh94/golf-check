@@ -1,3 +1,4 @@
+import { useState } from 'react'
 import { useApp } from '../../context/AppContext'
 
 const HOLE_OPTIONS = [9, 18, 27]
@@ -5,6 +6,25 @@ const WEATHER_OPTIONS = ['☀️ 맑음', '⛅ 구름', '🌧️ 비', '💨 바
 
 export default function BasicInfo() {
   const { formData, setForm, setHoleCount } = useApp()
+  const [weatherLoading, setWeatherLoading] = useState(false)
+  const [weatherDetail, setWeatherDetail] = useState(null)
+  const [weatherError, setWeatherError] = useState(null)
+
+  async function fetchWeather() {
+    setWeatherLoading(true)
+    setWeatherError(null)
+    try {
+      const res = await fetch('/api/weather')
+      const data = await res.json()
+      if (data.error) throw new Error(data.error)
+      setForm({ weather: data.label })
+      setWeatherDetail(data)
+    } catch (e) {
+      setWeatherError('날씨를 가져오지 못했어요. 직접 선택해주세요.')
+    } finally {
+      setWeatherLoading(false)
+    }
+  }
 
   return (
     <div className="page-section">
@@ -60,16 +80,43 @@ export default function BasicInfo() {
         </div>
 
         <label className="form-label">날씨</label>
-        <div className="btn-group wrap">
-          {WEATHER_OPTIONS.map(w => (
-            <button
-              key={w}
-              className={'btn-option' + (formData.weather === w ? ' active' : '')}
-              onClick={() => setForm({ weather: formData.weather === w ? '' : w })}
-            >
-              {w}
-            </button>
-          ))}
+        <div className="weather-section">
+          <button
+            className={'btn-weather-fetch' + (weatherLoading ? ' loading' : '')}
+            onClick={fetchWeather}
+            disabled={weatherLoading}
+          >
+            {weatherLoading ? '📡 불러오는 중...' : '📡 현재 날씨 가져오기'}
+          </button>
+
+          {weatherDetail && (
+            <div className="weather-detail">
+              <span className="wd-main">{weatherDetail.label}</span>
+              {weatherDetail.temp && <span className="wd-chip">🌡 {weatherDetail.temp}</span>}
+              {weatherDetail.humidity && <span className="wd-chip">💧 {weatherDetail.humidity}</span>}
+              {weatherDetail.wind && <span className="wd-chip">💨 {weatherDetail.wind}</span>}
+              {weatherDetail.rain && <span className="wd-chip">🌧 {weatherDetail.rain}</span>}
+            </div>
+          )}
+
+          {weatherError && <div className="weather-error">{weatherError}</div>}
+
+          <div className="weather-manual-label">직접 선택</div>
+          <div className="btn-group wrap">
+            {WEATHER_OPTIONS.map(w => (
+              <button
+                key={w}
+                className={'btn-option' + (formData.weather === w ? ' active' : '')}
+                onClick={() => { setForm({ weather: formData.weather === w ? '' : w }); setWeatherDetail(null) }}
+              >
+                {w}
+              </button>
+            ))}
+          </div>
+
+          {formData.weather && (
+            <div className="weather-selected">선택됨: <strong>{formData.weather}</strong></div>
+          )}
         </div>
 
         <label className="form-label">다음 점검</label>
