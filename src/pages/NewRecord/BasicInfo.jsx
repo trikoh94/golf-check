@@ -9,18 +9,21 @@ export default function BasicInfo() {
   const [weatherLoading, setWeatherLoading] = useState(false)
   const [weatherDetail, setWeatherDetail] = useState(null)
   const [weatherError, setWeatherError] = useState(null)
+  const [debugRaw, setDebugRaw] = useState(null)
 
   async function fetchWeather() {
     setWeatherLoading(true)
     setWeatherError(null)
+    setDebugRaw(null)
     try {
-      const res = await fetch('/api/weather')
+      const res = await fetch('/api/weather', { cache: 'no-store' })
       const data = await res.json()
+      setDebugRaw(JSON.stringify(data, null, 2))
       if (data.error) throw new Error(data.error)
       setForm({ weather: data.label })
       setWeatherDetail(data)
     } catch (e) {
-      setWeatherError('날씨를 가져오지 못했어요. 직접 선택해주세요.')
+      setWeatherError(e.message)
     } finally {
       setWeatherLoading(false)
     }
@@ -29,53 +32,29 @@ export default function BasicInfo() {
   return (
     <div className="page-section">
       <h2 className="section-title">기본 정보</h2>
-
       <div className="form-grid">
         <label className="form-label">점검일자</label>
-        <input
-          type="date"
-          className="form-input"
-          value={formData.date}
-          onChange={e => setForm({ date: e.target.value })}
-        />
+        <input type="date" className="form-input" value={formData.date}
+          onChange={e => setForm({ date: e.target.value })} />
 
         <label className="form-label">골프장명</label>
-        <input
-          type="text"
-          className="form-input"
-          value={formData.club}
-          placeholder="골프장명"
-          onChange={e => setForm({ club: e.target.value })}
-        />
+        <input type="text" className="form-input" value={formData.club}
+          placeholder="골프장명" onChange={e => setForm({ club: e.target.value })} />
 
         <label className="form-label">코스명</label>
-        <input
-          type="text"
-          className="form-input"
-          value={formData.course}
-          placeholder="예: A코스, 파인코스"
-          onChange={e => setForm({ course: e.target.value })}
-        />
+        <input type="text" className="form-input" value={formData.course}
+          placeholder="예: A코스, 파인코스" onChange={e => setForm({ course: e.target.value })} />
 
         <label className="form-label">점검자</label>
-        <input
-          type="text"
-          className="form-input"
-          value={formData.inspector}
-          placeholder="성명"
-          onChange={e => setForm({ inspector: e.target.value })}
-        />
+        <input type="text" className="form-input" value={formData.inspector}
+          placeholder="성명" onChange={e => setForm({ inspector: e.target.value })} />
 
         <label className="form-label">홀 수</label>
         <div className="btn-group">
           {HOLE_OPTIONS.map(n => (
-            <button
-              key={n}
+            <button key={n}
               className={'btn-option' + (formData.holeCount === n ? ' active' : '')}
-              onClick={() => setHoleCount(n)}
-            >
-              {n}홀
-            </button>
+              onClick={() => setHoleCount(n)}>{n}홀</button>
           ))}
         </div>
 
@@ -83,8 +62,7 @@ export default function BasicInfo() {
         <div className="weather-section">
           <button
             className={'btn-weather-fetch' + (weatherLoading ? ' loading' : '')}
-            onClick={fetchWeather}
-            disabled={weatherLoading}
+            onClick={fetchWeather} disabled={weatherLoading}
           >
             {weatherLoading ? '📡 불러오는 중...' : '📡 현재 날씨 가져오기'}
           </button>
@@ -99,42 +77,36 @@ export default function BasicInfo() {
             </div>
           )}
 
-          {weatherError && <div className="weather-error">{weatherError}</div>}
+          {/* 디버그: 실제 API 응답 표시 */}
+          {debugRaw && (
+            <pre style={{ fontSize: '.7rem', background: '#f3f4f6', padding: '.5rem', borderRadius: '.4rem', overflow: 'auto', maxHeight: '120px' }}>
+              {debugRaw}
+            </pre>
+          )}
+
+          {weatherError && <div className="weather-error">⚠️ {weatherError}</div>}
 
           <div className="weather-manual-label">직접 선택</div>
           <div className="btn-group wrap">
             {WEATHER_OPTIONS.map(w => (
-              <button
-                key={w}
+              <button key={w}
                 className={'btn-option' + (formData.weather === w ? ' active' : '')}
-                onClick={() => { setForm({ weather: formData.weather === w ? '' : w }); setWeatherDetail(null) }}
-              >
+                onClick={() => { setForm({ weather: formData.weather === w ? '' : w }); setWeatherDetail(null); setDebugRaw(null) }}>
                 {w}
               </button>
             ))}
           </div>
-
-          {formData.weather && (
-            <div className="weather-selected">선택됨: <strong>{formData.weather}</strong></div>
-          )}
+          {formData.weather && <div className="weather-selected">선택됨: <strong>{formData.weather}</strong></div>}
         </div>
 
         <label className="form-label">다음 점검</label>
-        <input
-          type="date"
-          className="form-input"
-          value={formData.nextVisit}
-          onChange={e => setForm({ nextVisit: e.target.value })}
-        />
+        <input type="date" className="form-input" value={formData.nextVisit}
+          onChange={e => setForm({ nextVisit: e.target.value })} />
 
         <label className="form-label">전체 메모</label>
-        <textarea
-          className="form-input"
-          value={formData.memo}
-          placeholder="전체 종합 메모"
-          rows={3}
-          onChange={e => setForm({ memo: e.target.value })}
-        />
+        <textarea className="form-input" value={formData.memo}
+          placeholder="전체 종합 메모" rows={3}
+          onChange={e => setForm({ memo: e.target.value })} />
       </div>
     </div>
   )
