@@ -498,3 +498,44 @@ textarea.form-input { resize: vertical; }
 .wc-reset { background: none; border: none; color: #0369a1; font-size: .75rem; cursor: pointer; text-decoration: underline; margin-top: .3rem; }
 .wc-chip.et  { background: #ecfdf5; color: #059669; }
 .wc-chip.rad { background: #fefce8; color: #ca8a04; }
+
+/* ─── Work Log ───────────────────────────────────────────── */
+.wl-header { display: flex; align-items: center; justify-content: space-between; margin-bottom: .75rem; }
+.btn-add-log {
+  background: #1a3d2b; color: #fff; border: none; border-radius: .5rem;
+  padding: .45rem .85rem; font-size: .85rem; font-weight: 600; cursor: pointer;
+}
+
+.wl-form {
+  background: #fff; border-radius: .75rem; padding: 1rem;
+  box-shadow: 0 2px 8px rgba(0,0,0,.08); margin-bottom: 1rem;
+}
+.wlf-title { font-weight: 700; font-size: .95rem; color: #1a3d2b; margin-bottom: .75rem; }
+.wl-type-grid { display: grid; grid-template-columns: repeat(4, 1fr); gap: .35rem; }
+.wl-type-btn {
+  padding: .4rem .3rem; border: 1.5px solid #e5e7eb; border-radius: .4rem;
+  font-size: .75rem; background: #fff; cursor: pointer; color: #374151; text-align: center;
+}
+.wl-type-btn.active { border-color: #1a3d2b; background: #f0fdf4; color: #1a3d2b; font-weight: 600; }
+
+.wlf-actions { display: flex; gap: .5rem; margin-top: .75rem; }
+.wlf-cancel {
+  flex: 1; padding: .6rem; border: 1.5px solid #e5e7eb; border-radius: .5rem;
+  background: #fff; color: #6b7280; cursor: pointer; font-size: .88rem;
+}
+.wlf-actions .btn-save { flex: 2; }
+
+.wl-list { display: flex; flex-direction: column; gap: .5rem; }
+.wl-card {
+  background: #fff; border-radius: .65rem; padding: .75rem 1rem;
+  box-shadow: 0 1px 3px rgba(0,0,0,.07);
+}
+.wlc-header { display: flex; align-items: center; gap: .4rem; margin-bottom: .35rem; }
+.wlc-emoji { font-size: 1rem; }
+.wlc-type { font-weight: 700; font-size: .9rem; }
+.wlc-section { font-size: .75rem; background: #f0fdf4; color: #16a34a; border-radius: 999px; padding: .1rem .45rem; }
+.wlc-date { margin-left: auto; font-size: .75rem; color: #9ca3af; }
+.wlc-details { display: flex; flex-wrap: wrap; gap: .3rem; margin-bottom: .3rem; }
+.wlc-detail-chip { font-size: .75rem; background: #f3f4f6; color: #374151; border-radius: 999px; padding: .15rem .5rem; }
+.wlc-memo { font-size: .82rem; color: #6b7280; margin-top: .2rem; }
+.wlc-worker { font-size: .75rem; color: #9ca3af; margin-top: .2rem; }
