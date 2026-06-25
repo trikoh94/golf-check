@@ -13,7 +13,7 @@ const WEED_TYPES = [
 export default function HolePanel({ sec, holeNum, holeData, onClose }) {
   const { setHoleDetail, setHoleUninspected, setHoleMemo, addHolePhotos, removeHolePhoto, showLightbox, showToast, weights } = useApp()
 
-  const { score, detail = {}, weedTypes = {}, memo, photos } = holeData
+  const { score, detail = {}, weedTypes = {}, memo, photos = [] } = holeData
 
   const [localDetail, setLocalDetail] = useState({ ...detail })
   const [localWeed, setLocalWeed] = useState({ ...weedTypes })

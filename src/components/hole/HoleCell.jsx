@@ -1,7 +1,7 @@
 import { SCORE_META } from '../../constants'
 
 export default function HoleCell({ holeNum, holeData, isOpen, onClick }) {
-  const { score, issues, photos } = holeData
+  const { score, issues = [], photos = [] } = holeData
   const uninspected = score === null
   const meta = uninspected ? null : SCORE_META[score]
   const hasBadge = !uninspected && (score !== 5 || issues.length > 0)
