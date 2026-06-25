@@ -11,10 +11,6 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
   const meta = uninspected ? null : SCORE_META[score]
   const issueOptions = SECTION_ISSUES[sec]
 
-  function handleSlider(e) {
-    setHoleScore(sec, holeNum, Number(e.target.value))
-  }
-
   function handleFileChange(e) {
     const files = Array.from(e.target.files).slice(0, 2 - photos.length)
     if (files.length) addHolePhotos(sec, holeNum, files)
@@ -27,100 +23,92 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
   }
 
   return (
-    <div className="hole-panel" style={meta ? { borderTop: `3px solid ${meta.color}` } : {}}>
-      <div className="panel-header">
-        <span className="panel-title">{holeNum}번 홀</span>
-        {meta && (
-          <span className="panel-score-badge" style={{ background: meta.color }}>
-            {score}점 {meta.label}
-          </span>
-        )}
-        <button className="panel-close" onClick={onClose}>✕</button>
+    <div className="hole-panel-sheet">
+      {/* 헤더 */}
+      <div className="hps-header">
+        <div className="hps-hole-info">
+          <span className="hps-num">{holeNum}번 홀</span>
+          {meta && (
+            <span className="hps-badge" style={{ background: meta.color }}>
+              {score}점 · {meta.label}
+            </span>
+          )}
+        </div>
+        <button className="hps-close" onClick={onClose}>✕</button>
       </div>
 
-      {/* Slider */}
-      <div className="slider-wrap">
-        <input
-          type="range"
-          min={1}
-          max={9}
-          step={1}
-          value={uninspected ? 5 : score}
-          disabled={uninspected}
-          onChange={handleSlider}
-          style={meta ? { accentColor: meta.color } : {}}
-        />
-        <div className="slider-labels">
+      {/* 점수 슬라이더 */}
+      <div className="hps-score-section">
+        <div className="hps-score-row">
           {[1,2,3,4,5,6,7,8,9].map(n => (
-            <span key={n} style={{ color: SCORE_META[n].color, fontWeight: score === n ? 700 : 400 }}>
+            <button
+              key={n}
+              className={`hps-score-btn${score === n ? ' active' : ''}`}
+              style={score === n ? { background: SCORE_META[n].color, borderColor: SCORE_META[n].color } : {}}
+              onClick={() => setHoleScore(sec, holeNum, n)}
+            >
               {n}
-            </span>
+            </button>
+          ))}
+        </div>
+        {meta && (
+          <div className="hps-score-bar-wrap">
+            <div className="hps-score-bar" style={{ width: `${(score/9)*100}%`, background: meta.color }} />
+          </div>
+        )}
+        {meta && <div className="hps-score-label" style={{ color: meta.color }}>{meta.label}</div>}
+      </div>
+
+      {/* 문제 항목 */}
+      <div className="hps-section">
+        <div className="hps-section-label">문제 항목</div>
+        <div className="hps-chips">
+          {issueOptions.map(issue => (
+            <button
+              key={issue}
+              className={`hps-chip${issues.includes(issue) ? ' active' : ''}`}
+              style={issues.includes(issue) && meta ? { background: meta.color, color: '#fff', borderColor: meta.color } : {}}
+              onClick={() => !uninspected && toggleHoleIssue(sec, holeNum, issue)}
+              disabled={uninspected}
+            >
+              {issue}
+            </button>
           ))}
         </div>
       </div>
 
-      {/* Issue chips */}
-      <div className="issue-chips">
-        {issueOptions.map(issue => (
-          <button
-            key={issue}
-            className={`chip${issues.includes(issue) ? ' active' : ''}`}
-            onClick={() => {
-              if (uninspected) return
-              toggleHoleIssue(sec, holeNum, issue)
-            }}
-            disabled={uninspected}
-            style={issues.includes(issue) && meta ? { background: meta.color, color: '#fff', borderColor: meta.color } : {}}
-          >
-            {issue}
-          </button>
-        ))}
-      </div>
-
-      {/* Memo */}
-      <textarea
-        className="hole-memo"
-        placeholder="홀 메모 (선택)"
-        value={memo}
-        disabled={uninspected}
-        onChange={e => setHoleMemo(sec, holeNum, e.target.value)}
-        rows={2}
-      />
-
-      {/* Photos */}
-      <div className="photo-row">
-        {photos.map((p, i) => (
-          <div key={i} className="photo-thumb-wrap">
-            <img
-              src={p.dataUrl}
-              alt={p.name}
-              className="photo-thumb"
-              onClick={() => showLightbox(photos, i)}
-            />
-            <button className="photo-remove" onClick={() => removeHolePhoto(sec, holeNum, i)}>✕</button>
-          </div>
-        ))}
-        {photos.length < 2 && !uninspected && (
-          <button className="photo-add-btn" onClick={() => fileRef.current?.click()}>
-            📷 사진 추가
-          </button>
-        )}
-        <input
-          ref={fileRef}
-          type="file"
-          accept="image/*"
-          multiple
-          style={{ display: 'none' }}
-          onChange={handleFileChange}
+      {/* 메모 + 사진 가로 배치 */}
+      <div className="hps-bottom-row">
+        <textarea
+          className="hps-memo"
+          placeholder="메모 (선택)"
+          value={memo}
+          disabled={uninspected}
+          onChange={e => setHoleMemo(sec, holeNum, e.target.value)}
+          rows={2}
         />
+        <div className="hps-photos">
+          {photos.map((p, i) => (
+            <div key={i} className="hps-photo-wrap">
+              <img src={p.dataUrl} alt="" className="hps-photo" onClick={() => showLightbox(photos, i)} />
+              <button className="hps-photo-del" onClick={() => removeHolePhoto(sec, holeNum, i)}>✕</button>
+            </div>
+          ))}
+          {photos.length < 2 && !uninspected && (
+            <button className="hps-photo-add" onClick={() => fileRef.current?.click()}>
+              📷
+            </button>
+          )}
+          <input ref={fileRef} type="file" accept="image/*" multiple style={{ display: 'none' }} onChange={handleFileChange} />
+        </div>
       </div>
 
-      {/* Bottom actions */}
-      <div className="panel-actions">
-        <button className="btn-uninspected" onClick={handleUninspected}>
+      {/* 미점검 버튼 */}
+      {!uninspected && (
+        <button className="hps-uninspected-btn" onClick={handleUninspected}>
           미점검으로 되돌리기
         </button>
-      </div>
+      )}
     </div>
   )
 }

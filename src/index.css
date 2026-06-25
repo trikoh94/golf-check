@@ -379,3 +379,85 @@ textarea.form-input { resize: vertical; }
 }
 .hole-step-btn.done { background: #f0fdf4; border-color: #86efac; color: #16a34a; }
 .hole-step-btn.current { background: #1a3d2b; border-color: #1a3d2b; color: #fff; }
+
+/* ─── Bottom Sheet ───────────────────────────────────────── */
+.bottom-sheet-backdrop {
+  position: fixed; inset: 0; background: rgba(0,0,0,.4); z-index: 200;
+}
+.bottom-sheet {
+  position: fixed; bottom: 0; left: 0; right: 0; z-index: 201;
+  background: #fff; border-radius: 1.25rem 1.25rem 0 0;
+  box-shadow: 0 -4px 24px rgba(0,0,0,.15);
+  animation: slideUp .22s ease;
+  max-height: 85vh; overflow-y: auto;
+}
+@keyframes slideUp {
+  from { transform: translateY(100%); }
+  to   { transform: translateY(0); }
+}
+.bottom-sheet-handle {
+  width: 40px; height: 4px; background: #d1d5db; border-radius: 999px;
+  margin: .65rem auto .25rem;
+}
+
+/* ─── Hole Panel Sheet ───────────────────────────────────── */
+.hole-panel-sheet { padding: .5rem 1rem 1.5rem; }
+
+.hps-header {
+  display: flex; align-items: center; justify-content: space-between;
+  margin-bottom: .75rem;
+}
+.hps-hole-info { display: flex; align-items: center; gap: .5rem; }
+.hps-num { font-size: 1.1rem; font-weight: 800; color: #111; }
+.hps-badge { font-size: .75rem; color: #fff; padding: .2rem .6rem; border-radius: 999px; font-weight: 600; }
+.hps-close { background: none; border: none; font-size: 1.1rem; color: #9ca3af; cursor: pointer; padding: .25rem; }
+
+/* 점수 버튼 */
+.hps-score-section { margin-bottom: .85rem; }
+.hps-score-row { display: flex; gap: .3rem; margin-bottom: .4rem; }
+.hps-score-btn {
+  flex: 1; padding: .5rem 0; border: 1.5px solid #e5e7eb; border-radius: .4rem;
+  background: #f9fafb; font-size: .85rem; font-weight: 700; color: #9ca3af; cursor: pointer;
+  transition: .12s;
+}
+.hps-score-btn.active { color: #fff; }
+.hps-score-bar-wrap { height: 5px; background: #f3f4f6; border-radius: 999px; overflow: hidden; margin-bottom: .25rem; }
+.hps-score-bar { height: 100%; border-radius: 999px; transition: width .2s; }
+.hps-score-label { font-size: .78rem; font-weight: 600; text-align: center; }
+
+/* 문제 항목 */
+.hps-section { margin-bottom: .75rem; }
+.hps-section-label { font-size: .75rem; font-weight: 600; color: #6b7280; margin-bottom: .4rem; }
+.hps-chips { display: flex; flex-wrap: wrap; gap: .35rem; }
+.hps-chip {
+  padding: .3rem .65rem; border: 1.5px solid #e5e7eb; border-radius: 999px;
+  font-size: .78rem; background: #fff; cursor: pointer; color: #374151; transition: .12s;
+}
+.hps-chip.active { font-weight: 600; }
+.hps-chip:disabled { opacity: .35; }
+
+/* 메모 + 사진 가로 배치 */
+.hps-bottom-row { display: flex; gap: .6rem; margin-bottom: .6rem; }
+.hps-memo {
+  flex: 1; border: 1px solid #e5e7eb; border-radius: .5rem;
+  padding: .5rem .65rem; font-size: .83rem; resize: none; font-family: inherit;
+  background: #f9fafb;
+}
+.hps-memo:disabled { opacity: .4; }
+.hps-photos { display: flex; gap: .35rem; align-items: flex-start; }
+.hps-photo-wrap { position: relative; }
+.hps-photo { width: 60px; height: 60px; object-fit: cover; border-radius: .4rem; cursor: pointer; }
+.hps-photo-del {
+  position: absolute; top: -4px; right: -4px; background: #dc2626; color: #fff;
+  border: none; border-radius: 50%; width: 16px; height: 16px; font-size: .6rem; cursor: pointer;
+  display: flex; align-items: center; justify-content: center;
+}
+.hps-photo-add {
+  width: 60px; height: 60px; border: 2px dashed #d1d5db; border-radius: .4rem;
+  background: #f9fafb; font-size: 1.2rem; cursor: pointer; color: #9ca3af;
+}
+
+.hps-uninspected-btn {
+  width: 100%; padding: .45rem; border: 1.5px solid #e5e7eb; border-radius: .4rem;
+  background: #fff; color: #9ca3af; font-size: .78rem; cursor: pointer;
+}

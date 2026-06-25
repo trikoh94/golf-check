@@ -10,54 +10,54 @@ export default function HoleGrid({ sec }) {
   const [openHole, setOpenHole] = useState(null)
 
   function handleCellClick(holeNum) {
-    if (openHole === holeNum) {
-      setOpenHole(null)
-      return
-    }
-    // activate uninspected hole to score 5 on first tap
     activateHole(sec, holeNum)
     setOpenHole(holeNum)
   }
 
-  // split into 9-hole blocks
   const blocks = []
   for (let start = 1; start <= holeCount; start += 9) {
-    blocks.push({ label: `${start}~${Math.min(start + 8, holeCount)}홀`, holes: range(start, Math.min(start + 8, holeCount)) })
+    blocks.push({
+      label: `${start}~${Math.min(start + 8, holeCount)}홀`,
+      holes: Array.from({ length: Math.min(9, holeCount - start + 1) }, (_, i) => start + i)
+    })
   }
 
   return (
-    <div className="hole-grid-container">
-      {blocks.map(({ label, holes }) => (
-        <div key={label} className="hole-block">
-          <div className="hole-block-label">{label}</div>
-          <div className="hole-grid">
-            {holes.map(n => (
-              <div key={n}>
+    <>
+      <div className="hole-grid-container">
+        {blocks.map(({ label, holes }) => (
+          <div key={label} className="hole-block">
+            <div className="hole-block-label">{label}</div>
+            <div className="hole-grid">
+              {holes.map(n => (
                 <HoleCell
+                  key={n}
                   holeNum={n}
                   holeData={sectionData[n]}
                   isOpen={openHole === n}
                   onClick={() => handleCellClick(n)}
                 />
-                {openHole === n && (
-                  <HolePanel
-                    sec={sec}
-                    holeNum={n}
-                    holeData={sectionData[n]}
-                    onClose={() => setOpenHole(null)}
-                  />
-                )}
-              </div>
-            ))}
+              ))}
+            </div>
           </div>
-        </div>
-      ))}
-    </div>
-  )
-}
+        ))}
+      </div>
 
-function range(start, end) {
-  const arr = []
-  for (let i = start; i <= end; i++) arr.push(i)
-  return arr
+      {/* 바텀 시트 */}
+      {openHole !== null && (
+        <>
+          <div className="bottom-sheet-backdrop" onClick={() => setOpenHole(null)} />
+          <div className="bottom-sheet">
+            <div className="bottom-sheet-handle" />
+            <HolePanel
+              sec={sec}
+              holeNum={openHole}
+              holeData={sectionData[openHole]}
+              onClose={() => setOpenHole(null)}
+            />
+          </div>
+        </>
+      )}
+    </>
+  )
 }
