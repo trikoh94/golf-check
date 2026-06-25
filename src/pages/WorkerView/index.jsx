@@ -1,7 +1,8 @@
 import { useState, useEffect, useRef } from 'react'
 import { calcDiseaseRisk } from '../../lib/diseaseRisk'
 import { supabase } from '../../lib/supabase'
-import { SCORE_META, compressImage } from '../../constants'
+import { SCORE_META } from '../../constants'
+import { uploadPhoto } from '../../lib/uploadPhoto'
 
 const TODAY = new Date().toISOString().slice(0, 10)
 
@@ -100,17 +101,18 @@ export default function WorkerView() {
 
   async function handleAddPhoto(e, target) {
     const files = Array.from(e.target.files)
-    const results = []
+    const urls = []
     for (const f of files) {
-      const dataUrl = await new Promise(res => {
-        const reader = new FileReader()
-        reader.onload = ev => res(ev.target.result)
-        reader.readAsDataURL(f)
-      })
-      results.push(await compressImage(dataUrl))
+      try {
+        const url = await uploadPhoto(f, 'work-photos', `${selectedDate}/${modal?.section ?? editTarget?.section ?? 'misc'}`)
+        urls.push(url)
+      } catch (err) {
+        alert('사진 업로드 실패: ' + err.message)
+      }
     }
-    if (target === 'edit') setEditForm(f => ({ ...f, photos: [...(f.photos??[]), ...results] }))
-    else setForm(f => ({ ...f, photos: [...f.photos, ...results] }))
+    if (!urls.length) return
+    if (target === 'edit') setEditForm(f => ({ ...f, photos: [...(f.photos??[]), ...urls] }))
+    else setForm(f => ({ ...f, photos: [...f.photos, ...urls] }))
   }
 
   async function saveLog() {

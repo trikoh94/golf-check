@@ -1,5 +1,6 @@
 import { createContext, useContext, useReducer, useCallback } from 'react'
-import { initAllHoles, compressImage } from '../constants'
+import { initAllHoles } from '../constants'
+import { uploadPhoto } from '../lib/uploadPhoto'
 
 const initialForm = {
   date: new Date().toISOString().slice(0, 10),
@@ -155,14 +156,17 @@ export function AppProvider({ children }) {
   const resetAll = useCallback(() => dispatch({ type: 'RESET_ALL' }), [])
 
   const addHolePhotos = useCallback(async (sec, hole, files) => {
+    const date = new Date().toISOString().slice(0, 10)
     const results = []
     for (const file of files) {
-      const reader = new FileReader()
-      const dataUrl = await new Promise(res => { reader.onload = e => res(e.target.result); reader.readAsDataURL(file) })
-      const compressed = await compressImage(dataUrl)
-      results.push({ dataUrl: compressed, name: file.name })
+      try {
+        const url = await uploadPhoto(file, 'inspection-photos', `${date}/${sec}/${hole}`)
+        results.push({ dataUrl: url, name: file.name })
+      } catch (e) {
+        console.error('사진 업로드 실패:', e.message)
+      }
     }
-    dispatch({ type: 'ADD_HOLE_PHOTOS', payload: { sec, hole, photos: results } })
+    if (results.length) dispatch({ type: 'ADD_HOLE_PHOTOS', payload: { sec, hole, photos: results } })
   }, [])
 
   const removeHolePhoto = useCallback((sec, hole, index) =>
