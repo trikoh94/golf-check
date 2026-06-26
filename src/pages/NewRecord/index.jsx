@@ -8,7 +8,7 @@ import SummaryPage from './SummaryPage'
 export default function NewRecord({ onSaved }) {
   const [subtab, setSubtab] = useState('basic')
   const [saving, setSaving] = useState(false)
-  const { holeState, saveDraft, showToast } = useApp()
+  const { holeState, saveDraft, showToast, draftId, formData } = useApp()
 
   function getBadge(tab) {
     if (!SEC_KEYS.includes(tab)) return 0
@@ -43,7 +43,11 @@ export default function NewRecord({ onSaved }) {
     <div className="new-record">
       {/* 임시저장 바 - 탭보다 위 */}
       <div className="draft-save-bar">
-        <span className="draft-save-bar-label">작성 중인 점검</span>
+        <span className="draft-save-bar-label">
+          {draftId
+            ? `💾 저장됨 · ${formData.course || '코스미지정'} · ${formData.holeCount}홀`
+            : '새 점검 작성 중'}
+        </span>
         <button
           className={'btn-draft-save' + (saving ? ' loading' : '')}
           onClick={handleDraftSave}
