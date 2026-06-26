@@ -18,7 +18,8 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
   const [localDetail, setLocalDetail] = useState({ ...detail })
   const [localWeed, setLocalWeed] = useState({ ...weedTypes })
   const [uploading, setUploading] = useState(false)
-  const fileRef = useRef()
+  const cameraRef = useRef()
+  const galleryRef = useRef()
 
   // 자동 계산 점수
   const calcScore = calcHoleScore(localDetail, sec, weights)
@@ -153,9 +154,14 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
           ))}
           {uploading && <div className="hps-photo-uploading">⏳</div>}
           {!uploading && (
-            <button className="hps-photo-add" onClick={() => fileRef.current?.click()}>📷</button>
+            <>
+              <button className="hps-photo-add" onClick={() => cameraRef.current?.click()} title="카메라">📷</button>
+              <button className="hps-photo-add hps-photo-gallery" onClick={() => galleryRef.current?.click()} title="사진첩">🖼️</button>
+            </>
           )}
-          <input ref={fileRef} type="file" accept="image/*" multiple capture="environment"
+          <input ref={cameraRef} type="file" accept="image/*" multiple capture="environment"
+            style={{ display: 'none' }} onChange={handleFileChange} />
+          <input ref={galleryRef} type="file" accept="image/*" multiple
             style={{ display: 'none' }} onChange={handleFileChange} />
         </div>
       </div>
