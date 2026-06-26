@@ -71,7 +71,7 @@ export function exportInspectionExcel(rec) {
   XLSX.utils.book_append_sheet(wb, ws1, '기본정보')
 
   // 구역별
-  [
+  ;[
     { name: '티잉그라운드', data: rec.tee, green: false },
     { name: '페어웨이',     data: rec.fairway, green: false },
     { name: '그린',        data: rec.green, green: true },

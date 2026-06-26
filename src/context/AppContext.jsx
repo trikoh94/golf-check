@@ -165,7 +165,6 @@ const DRAFT_KEY = 'turf_draft_v1'
 const SUPABASE_DRAFT_KEY = 'turf_draft_supabase_id'
 
 export function AppProvider({ children }) {
-  // localStorage draft 복구: 저장된 임시 데이터가 있으면 초기 상태로 사용
   const savedDraft = (() => {
     try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) } catch { return null }
   })()
@@ -174,11 +173,9 @@ export function AppProvider({ children }) {
   const [weights, setWeightsState] = useState(DEFAULT_WEIGHTS)
   const [hasDraft] = useState(!!savedDraft)
 
-  // Supabase draft 상태
   const [draftId, setDraftId] = useState(() => localStorage.getItem(SUPABASE_DRAFT_KEY))
-  const [supabaseDraft, setSupabaseDraft] = useState(null) // 복구할 draft 데이터
+  const [supabaseDraft, setSupabaseDraft] = useState(null)
 
-  // saveDraft에서 최신 state를 참조하기 위한 ref
   const stateRef = useRef(state)
   useEffect(() => { stateRef.current = state }, [state])
 
@@ -186,7 +183,6 @@ export function AppProvider({ children }) {
     fetchWeights().then(w => setWeightsState(w))
   }, [])
 
-  // 앱 시작 시 Supabase에서 미완료 draft 확인
   useEffect(() => {
     const id = localStorage.getItem(SUPABASE_DRAFT_KEY)
     if (!id) return
@@ -200,20 +196,17 @@ export function AppProvider({ children }) {
         if (!error && data) {
           setSupabaseDraft(data)
         } else {
-          // draft가 없거나 이미 완료됨 → ID 정리
           localStorage.removeItem(SUPABASE_DRAFT_KEY)
           setDraftId(null)
         }
       })
   }, [])
 
-  // 상태 변경마다 localStorage draft 자동 저장 (toast/lightbox 제외)
   useEffect(() => {
     const { toast, lightbox, ...saveable } = state
     localStorage.setItem(DRAFT_KEY, JSON.stringify(saveable))
   }, [state])
 
-  // Supabase에 현재 상태를 draft로 저장 (임시저장 버튼용)
   const saveDraft = useCallback(async () => {
     const { formData, holeState } = stateRef.current
     const { date, club, course, inspector, weather, weatherDetail, nextVisit, memo, holeCount } = formData
@@ -257,7 +250,6 @@ export function AppProvider({ children }) {
     }
   }, [])
 
-  // Supabase draft를 현재 state로 복구
   const restoreSupabaseDraft = useCallback(() => {
     if (!supabaseDraft) return
     const count = supabaseDraft.hole_count || 27
@@ -273,15 +265,14 @@ export function AppProvider({ children }) {
       holeCount: count,
     }
     const hs = {
-      tee:   supabaseDraft.tee   || initAllHoles(count),
+      tee:   supabaseDraft.tee     || initAllHoles(count),
       fw:    supabaseDraft.fairway || initAllHoles(count),
-      green: supabaseDraft.green || initAllHoles(count),
+      green: supabaseDraft.green   || initAllHoles(count),
     }
     dispatch({ type: 'LOAD_DRAFT', payload: { formData: fd, holeState: hs } })
     setSupabaseDraft(null)
   }, [supabaseDraft])
 
-  // Supabase draft 복구 거절 (새로 시작)
   const dismissSupabaseDraft = useCallback(() => {
     setSupabaseDraft(null)
     localStorage.removeItem(SUPABASE_DRAFT_KEY)
