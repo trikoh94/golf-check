@@ -791,9 +791,22 @@ textarea.form-input { resize: vertical; }
 .hps-metric-group { background: #f9fafb; border-radius: 10px; padding: .6rem .75rem; }
 .hps-metric-group-title { font-size: .75rem; font-weight: 700; color: #6b7280; margin-bottom: .5rem; }
 .hps-metric-group-title span { font-weight: 400; }
-.hps-metric-row { display: flex; align-items: center; gap: .4rem; margin-bottom: .35rem; }
+.hps-metric-row { display: flex; flex-direction: column; gap: .3rem; margin-bottom: .6rem; }
 .hps-metric-row:last-child { margin-bottom: 0; }
-.hps-metric-label { font-size: .78rem; min-width: 72px
+.hps-metric-label { font-size: .82rem; font-weight: 600; color: #374151; }
+.hps-metric-btns { display: flex; gap: .3rem; }
+.hps-m-btn {
+  flex: 1; height: 2.4rem; border: 2px solid #e5e7eb; border-radius: .5rem;
+  background: #fff; font-size: .95rem; font-weight: 700; color: #9ca3af;
+  cursor: pointer; transition: all .12s; display: flex; align-items: center; justify-content: center;
+}
+.hps-m-btn:active { transform: scale(.93); }
+.hps-number-input-wrap { display: flex; align-items: center; gap: .4rem; }
+.hps-number-input {
+  flex: 1; height: 2.4rem; border: 2px solid #e5e7eb; border-radius: .5rem;
+  padding: 0 .5rem; font-size: 1rem; font-weight: 600; text-align: center;
+}
+.hps-unit { font-size: .85rem; color: #6b7280; white-space: nowrap; }
 /* ─── NewRecord Header (임시저장 버튼 포함) ─────────────── */
 .new-record-header {
   display: flex; align-items: center; gap: .5rem;
@@ -805,12 +818,17 @@ textarea.form-input { resize: vertical; }
   flex: 1; border-bottom: none; position: static; top: auto;
 }
 .btn-draft-save {
-  flex-shrink: 0; background: #1a3d2b; color: #fff;
-  border: none; border-radius: .5rem; padding: .45rem .85rem;
-  font-size: .8rem; font-weight: 600; cursor: pointer; white-space: nowrap;
+  flex-shrink: 0;
+  background: linear-gradient(135deg, #1a3d2b 0%, #2d6a4f 100%);
+  color: #fff; border: none; border-radius: .6rem;
+  padding: .5rem 1rem; font-size: .82rem; font-weight: 700;
+  cursor: pointer; white-space: nowrap;
+  box-shadow: 0 2px 6px rgba(26,61,43,.35);
+  letter-spacing: .02em; transition: opacity .15s, transform .1s;
 }
-.btn-draft-save:disabled { opacity: .6; cursor: default; }
-.btn-draft-save.loading { background: #4b7a5e; }
+.btn-draft-save:active { transform: scale(.96); }
+.btn-draft-save:disabled { opacity: .5; cursor: default; transform: none; }
+.btn-draft-save.loading { opacity: .7; }
 
 /* ─── Supabase Draft 복구 배너 ──────────────────────────── */
 .draft-banner--supabase {
@@ -834,12 +852,3 @@ textarea.form-input { resize: vertical; }
   background: #f0fdf4; border: 1px solid #86efac; border-radius: .5rem;
   padding: .5rem .8rem; margin-bottom: 1rem; font-size: .82rem; color: #166534;
 }
-ground: #f3f4f6; color: #6b7280; white-space: nowrap; }
-.settings-input-wrap { display: flex; align-items: center; gap: .2rem; }
-.settings-input { width: 48px; border: 1.5px solid #e5e7eb; border-radius: 6px; padding: .2rem .35rem; font-size: .82rem; text-align: center; }
-.settings-pct { font-size: .75rem; color: #6b7280; }
-.settings-bar-wrap { flex: 1; height: 6px; background: #e5e7eb; border-radius: 3px; overflow: hidden; }
-.settings-bar { height: 100%; border-radius: 3px; transition: width .2s; }
-.settings-actions { display: flex; gap: .75rem; margin-bottom: .75rem; }
-.settings-btn-reset { flex: 1; padding: .7rem; border-radius: 10px; border: 1.5px solid #e5e7eb; background: #fff; font-size: .88rem; cursor: pointer; color: #6b7280; }
-.settings-note { font-size: .72rem; color: #9ca3af; text-align: center; }

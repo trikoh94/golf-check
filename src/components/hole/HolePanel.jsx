@@ -170,24 +170,35 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
   )
 }
 
+const GOOD_COLORS = ['#dc2626','#f97316','#eab308','#16a34a','#0284c7']
+const BAD_COLORS  = ['#0284c7','#16a34a','#eab308','#f97316','#dc2626']
+const GOOD_LABELS = ['매우나쁨','나쁨','보통','좋음','매우좋음']
+const BAD_LABELS  = ['없음','약간','보통','심각','매우심각']
+
 function MetricRow({ metric, value, onChange }) {
+  const colors = metric.dir === 'good' ? GOOD_COLORS : BAD_COLORS
+  const labels = metric.dir === 'good' ? GOOD_LABELS : BAD_LABELS
   return (
     <div className="hps-metric-row">
       <span className="hps-metric-label">{metric.emoji} {metric.label}</span>
       <div className="hps-metric-btns">
-        {[1,2,3,4,5].map(n => (
-          <button key={n}
-            className={'hps-m-btn' + (value === n ? ' active' : '')}
-            style={value === n ? {
-              background: metric.dir === 'good'
-                ? ['#dc2626','#f97316','#eab308','#16a34a','#0284c7'][n-1]
-                : ['#0284c7','#16a34a','#eab308','#f97316','#dc2626'][n-1],
-              borderColor: 'transparent', color: '#fff'
-            } : {}}
-            onClick={() => onChange(value === n ? null : n)}>
-            {n}
-          </button>
-        ))}
+        {[1,2,3,4,5].map(n => {
+          const active = value === n
+          return (
+            <button key={n}
+              className={'hps-m-btn' + (active ? ' active' : '')}
+              style={active
+                ? { background: colors[n-1], borderColor: colors[n-1], color: '#fff' }
+                : value && n < value
+                  ? { borderColor: colors[value-1] + '55', color: colors[value-1] + 'aa' }
+                  : {}
+              }
+              title={labels[n-1]}
+              onClick={() => onChange(active ? null : n)}>
+              {n}
+            </button>
+          )
+        })}
       </div>
     </div>
   )

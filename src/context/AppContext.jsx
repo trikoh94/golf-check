@@ -216,7 +216,7 @@ export function AppProvider({ children }) {
       date: date || new Date().toISOString().slice(0, 10),
       club: club || '해남 파인비치 골프링크스',
       course: course || null,
-      inspector: inspector || null,
+      inspector: inspector || '(미입력)',
       weather: weather || null,
       temperature:    r.temperature   ?? null,
       humidity:       r.humidity      ?? null,
