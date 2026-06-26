@@ -41,22 +41,9 @@ export default function NewRecord({ onSaved }) {
 
   return (
     <div className="new-record">
-      <div className="new-record-header">
-        <nav className="subtab-nav">
-          {SUBTABS.map(tab => {
-            const badge = getBadge(tab)
-            return (
-              <button
-                key={tab}
-                className={'subtab' + (subtab === tab ? ' active' : '')}
-                onClick={() => setSubtab(tab)}
-              >
-                {SUBTAB_LABEL[tab]}
-                {badge > 0 && <span className="subtab-badge">{badge}</span>}
-              </button>
-            )
-          })}
-        </nav>
+      {/* 임시저장 바 - 탭보다 위 */}
+      <div className="draft-save-bar">
+        <span className="draft-save-bar-label">작성 중인 점검</span>
         <button
           className={'btn-draft-save' + (saving ? ' loading' : '')}
           onClick={handleDraftSave}
@@ -65,6 +52,22 @@ export default function NewRecord({ onSaved }) {
           {saving ? '⏳ 저장 중...' : '💾 임시저장'}
         </button>
       </div>
+      {/* 탭 네비게이션 */}
+      <nav className="subtab-nav">
+        {SUBTABS.map(tab => {
+          const badge = getBadge(tab)
+          return (
+            <button
+              key={tab}
+              className={'subtab' + (subtab === tab ? ' active' : '')}
+              onClick={() => setSubtab(tab)}
+            >
+              {SUBTAB_LABEL[tab]}
+              {badge > 0 && <span className="subtab-badge">{badge}</span>}
+            </button>
+          )
+        })}
+      </nav>
       <div className="subtab-content">
         {renderContent()}
       </div>

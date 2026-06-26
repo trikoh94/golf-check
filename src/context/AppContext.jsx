@@ -6,14 +6,14 @@ import { supabase } from '../lib/supabase'
 
 const initialForm = {
   date: new Date().toISOString().slice(0, 10),
-  club: '해남 파인비치 골프링크스',
+  club: '솔라시도 골프클럽',
   course: '',
   inspector: '',
   weather: '',
   weatherDetail: null,
   nextVisit: '',
   memo: '',
-  holeCount: 27,
+  holeCount: 9,
 }
 
 function makeHoleState(count) {
@@ -26,7 +26,7 @@ function makeHoleState(count) {
 
 const initialState = {
   formData: initialForm,
-  holeState: makeHoleState(27),
+  holeState: makeHoleState(9),
   toast: null,
   lightbox: null,
 }
@@ -147,7 +147,7 @@ function reducer(state, action) {
       return {
         ...initialState,
         formData: { ...initialForm, date: new Date().toISOString().slice(0, 10) },
-        holeState: makeHoleState(27),
+        holeState: makeHoleState(9),
       }
 
     case 'SHOW_TOAST': return { ...state, toast: action.payload }
@@ -161,7 +161,7 @@ function reducer(state, action) {
 
 const AppContext = createContext(null)
 
-const DRAFT_KEY = 'turf_draft_v1'
+const DRAFT_KEY = 'turf_draft_v2'
 const SUPABASE_DRAFT_KEY = 'turf_draft_supabase_id'
 
 export function AppProvider({ children }) {
@@ -214,7 +214,7 @@ export function AppProvider({ children }) {
 
     const payload = {
       date: date || new Date().toISOString().slice(0, 10),
-      club: club || '해남 파인비치 골프링크스',
+      club: club || '솔라시도 골프클럽',
       course: course || null,
       inspector: inspector || '(미입력)',
       weather: weather || null,

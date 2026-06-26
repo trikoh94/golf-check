@@ -27,7 +27,7 @@ body {
 /* ─── SubTab Nav ─────────────────────────────────────────── */
 .subtab-nav {
   display: flex; overflow-x: auto; background: #fff;
-  border-bottom: 1px solid #e5e7eb; position: sticky; top: 90px; z-index: 90;
+  border-bottom: 1px solid #e5e7eb; position: sticky; top: 126px; z-index: 90;
   scrollbar-width: none;
 }
 .subtab-nav::-webkit-scrollbar { display: none; }
@@ -807,24 +807,23 @@ textarea.form-input { resize: vertical; }
   padding: 0 .5rem; font-size: 1rem; font-weight: 600; text-align: center;
 }
 .hps-unit { font-size: .85rem; color: #6b7280; white-space: nowrap; }
-/* ─── NewRecord Header (임시저장 버튼 포함) ─────────────── */
-.new-record-header {
-  display: flex; align-items: center; gap: .5rem;
-  background: #fff; border-bottom: 1px solid #e5e7eb;
-  position: sticky; top: 90px; z-index: 90;
-  padding-right: .5rem;
+/* ─── 임시저장 바 (탭 위에 고정) ───────────────────────── */
+.draft-save-bar {
+  display: flex; align-items: center; justify-content: space-between;
+  background: #f0fdf4; border-bottom: 1px solid #bbf7d0;
+  padding: .4rem .75rem;
+  position: sticky; top: 90px; z-index: 91;
 }
-.new-record-header .subtab-nav {
-  flex: 1; border-bottom: none; position: static; top: auto;
+.draft-save-bar-label {
+  font-size: .78rem; color: #166534; font-weight: 600;
 }
 .btn-draft-save {
-  flex-shrink: 0;
   background: linear-gradient(135deg, #1a3d2b 0%, #2d6a4f 100%);
   color: #fff; border: none; border-radius: .6rem;
-  padding: .5rem 1rem; font-size: .82rem; font-weight: 700;
+  padding: .4rem .9rem; font-size: .82rem; font-weight: 700;
   cursor: pointer; white-space: nowrap;
-  box-shadow: 0 2px 6px rgba(26,61,43,.35);
-  letter-spacing: .02em; transition: opacity .15s, transform .1s;
+  box-shadow: 0 2px 6px rgba(26,61,43,.3);
+  transition: opacity .15s, transform .1s;
 }
 .btn-draft-save:active { transform: scale(.96); }
 .btn-draft-save:disabled { opacity: .5; cursor: default; transform: none; }
@@ -851,4 +850,40 @@ textarea.form-input { resize: vertical; }
 .draft-active-banner {
   background: #f0fdf4; border: 1px solid #86efac; border-radius: .5rem;
   padding: .5rem .8rem; margin-bottom: 1rem; font-size: .82rem; color: #166534;
+}
+
+/* ─── 코스 프리셋 버튼 ──────────────────────────────────── */
+.course-select-wrap { display: flex; flex-direction: column; gap: .4rem; }
+.course-presets { display: flex; gap: .4rem; }
+.course-preset-btn {
+  flex: 1; padding: .45rem 0; border: 2px solid #e5e7eb; border-radius: .5rem;
+  background: #fff; font-size: .88rem; font-weight: 600; color: #6b7280; cursor: pointer;
+}
+.course-preset-btn.active {
+  background: #1a3d2b; color: #fff; border-color: #1a3d2b;
+}
+
+/* ─── RecordList 날짜 그룹 뷰 ─────────────────────────── */
+.day-group { margin-bottom: 1.2rem; }
+.day-group-header {
+  display: flex; align-items: center; gap: .5rem;
+  padding: .4rem .6rem; margin-bottom: .4rem;
+  background: #f0fdf4; border-radius: .5rem; border-left: 3px solid #1a3d2b;
+}
+.day-group-date { font-size: .95rem; font-weight: 800; color: #1a3d2b; }
+.day-group-club { font-size: .8rem; color: #6b7280; flex: 1; }
+.day-group-badge {
+  background: #1a3d2b; color: #fff; font-size: .72rem; font-weight: 700;
+  padding: .15rem .5rem; border-radius: 999px;
+}
+.day-group-total {
+  display: flex; align-items: center; gap: .5rem; flex-wrap: wrap;
+  padding: .35rem .6rem; margin-bottom: .4rem;
+  background: #fafafa; border-radius: .4rem; border: 1px solid #e5e7eb;
+}
+.day-avg-chip { font-size: .82rem; font-weight: 700; }
+.day-avg-label { font-size: .72rem; color: #9ca3af; margin-left: auto; }
+.rc-course-tag {
+  background: #dcfce7; color: #166534; font-size: .78rem; font-weight: 700;
+  padding: .15rem .5rem; border-radius: .3rem;
 }

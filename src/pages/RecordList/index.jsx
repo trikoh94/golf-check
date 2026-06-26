@@ -3,7 +3,7 @@ import { supabase } from '../../lib/supabase'
 import { SCORE_META, SEC_KEYS, SEC_NAME } from '../../constants'
 
 export default function RecordList({ onSelect }) {
-  const [records, setRecords] = useState([])
+  const [groups, setGroups] = useState([])   // [{ date, club, records: [...] }]
   const [loading, setLoading] = useState(true)
   const [deleteId, setDeleteId] = useState(null)
   const [editRec, setEditRec] = useState(null)
@@ -16,9 +16,19 @@ export default function RecordList({ onSelect }) {
       .select('id, date, club, course, inspector, next_visit, memo, tee, fairway, green, hole_count')
       .or('status.is.null,status.eq.completed')
       .order('date', { ascending: false })
-      .limit(50)
+      .order('created_at', { ascending: true })
+      .limit(100)
       .then(({ data, error }) => {
-        if (!error) setRecords(data || [])
+        if (!error && data) {
+          // 날짜+골프장별 그룹핑
+          const map = new Map()
+          data.forEach(r => {
+            const key = r.date + '|' + (r.club || '')
+            if (!map.has(key)) map.set(key, { date: r.date, club: r.club, records: [] })
+            map.get(key).records.push(r)
+          })
+          setGroups(Array.from(map.values()))
+        }
         setLoading(false)
       })
   }
@@ -30,6 +40,18 @@ export default function RecordList({ onSelect }) {
     const vals = Object.values(secData).filter(h => h.score !== null).map(h => h.score)
     if (!vals.length) return null
     return (vals.reduce((a, b) => a + b, 0) / vals.length).toFixed(1)
+  }
+
+  // 그룹 전체 평균 (전 코스 합산)
+  function groupAvg(records, secKey) {
+    const all = []
+    records.forEach(r => {
+      const data = secKey === 'fw' ? r.fairway : r[secKey]
+      if (!data) return
+      Object.values(data).forEach(h => { if (h.score !== null) all.push(h.score) })
+    })
+    if (!all.length) return null
+    return (all.reduce((a, b) => a + b, 0) / all.length).toFixed(1)
   }
 
   async function handleDelete() {
@@ -59,36 +81,70 @@ export default function RecordList({ onSelect }) {
   }
 
   if (loading) return <div className="loading">불러오는 중...</div>
-  if (!records.length) return <div className="empty">저장된 기록이 없습니다.</div>
+  if (!groups.length) return <div className="empty">저장된 기록이 없습니다.</div>
 
   return (
     <div className="record-list">
-      {records.map(r => {
+      {groups.map(({ date, club, records }) => {
+        const multiCourse = records.length > 1
+
         return (
-          <div key={r.id} className="record-card-wrap">
-            <div className="record-card" onClick={() => onSelect(r.id)}>
-              <div className="rc-header">
-                <span className="rc-date">{r.date}</span>
-                <span className="rc-club">{r.club} {r.course ? `/ ${r.course}` : ''}</span>
-              </div>
-              <div className="rc-scores">
+          <div key={date + club} className="day-group">
+            {/* 날짜 헤더 */}
+            <div className="day-group-header">
+              <span className="day-group-date">{date}</span>
+              <span className="day-group-club">{club}</span>
+              {multiCourse && (
+                <span className="day-group-badge">{records.length}코스</span>
+              )}
+            </div>
+
+            {/* 전체 평균 (2코스 이상일 때) */}
+            {multiCourse && (
+              <div className="day-group-total">
                 {SEC_KEYS.map(sec => {
-                  const key = sec === 'fw' ? 'fairway' : sec
-                  const avg = avgScore(r[key])
+                  const avg = groupAvg(records, sec)
                   const m = avg ? SCORE_META[Math.round(Number(avg))] : null
                   return (
-                    <span key={sec} className="rc-score-chip" style={m ? { color: m.color } : {}}>
-                      {SEC_NAME[sec]}: {avg ?? '—'}
+                    <span key={sec} className="day-avg-chip" style={m ? { color: m.color } : {}}>
+                      {SEC_NAME[sec]} {avg ?? '—'}
                     </span>
                   )
                 })}
+                <span className="day-avg-label">전체 평균</span>
               </div>
-              <div className="rc-inspector">{r.inspector} · {r.hole_count}홀</div>
-            </div>
-            <div className="rc-actions">
-              <button className="rc-btn-edit" onClick={e => openEdit(e, r)}>✏️ 수정</button>
-              <button className="rc-btn-delete" onClick={e => { e.stopPropagation(); setDeleteId(r.id) }}>🗑️ 삭제</button>
-            </div>
+            )}
+
+            {/* 각 코스 카드 */}
+            {records.map(r => {
+              const secKey = { tee: 'tee', fw: 'fairway', green: 'green' }
+              return (
+                <div key={r.id} className="record-card-wrap">
+                  <div className="record-card" onClick={() => onSelect(r.id)}>
+                    <div className="rc-header">
+                      <span className="rc-course-tag">{r.course || '코스미지정'}</span>
+                      <span className="rc-inspector">{r.inspector} · {r.hole_count}홀</span>
+                    </div>
+                    <div className="rc-scores">
+                      {SEC_KEYS.map(sec => {
+                        const data = sec === 'fw' ? r.fairway : r[sec]
+                        const avg = avgScore(data)
+                        const m = avg ? SCORE_META[Math.round(Number(avg))] : null
+                        return (
+                          <span key={sec} className="rc-score-chip" style={m ? { color: m.color } : {}}>
+                            {SEC_NAME[sec]}: {avg ?? '—'}
+                          </span>
+                        )
+                      })}
+                    </div>
+                  </div>
+                  <div className="rc-actions">
+                    <button className="rc-btn-edit" onClick={e => openEdit(e, r)}>✏️ 수정</button>
+                    <button className="rc-btn-delete" onClick={e => { e.stopPropagation(); setDeleteId(r.id) }}>🗑️ 삭제</button>
+                  </div>
+                </div>
+              )
+            })}
           </div>
         )
       })}
@@ -120,7 +176,7 @@ export default function RecordList({ onSelect }) {
                 <input type="text" value={editForm.inspector} onChange={e => setEditForm(f => ({ ...f, inspector: e.target.value }))} />
               </label>
               <label>코스
-                <input type="text" placeholder="예: A코스" value={editForm.course} onChange={e => setEditForm(f => ({ ...f, course: e.target.value }))} />
+                <input type="text" placeholder="예: 솔라, 시도, 비치" value={editForm.course} onChange={e => setEditForm(f => ({ ...f, course: e.target.value }))} />
               </label>
               <label>다음 점검일
                 <input type="date" value={editForm.next_visit} onChange={e => setEditForm(f => ({ ...f, next_visit: e.target.value }))} />

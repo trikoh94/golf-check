@@ -68,8 +68,19 @@ export default function BasicInfo() {
           onChange={e => setForm({ club: e.target.value })} />
 
         <label className="form-label">코스명</label>
-        <input type="text" className="form-input" value={formData.course}
-          placeholder="예: 파인, 비치, 오시아노" onChange={e => setForm({ course: e.target.value })} />
+        <div className="course-select-wrap">
+          <div className="course-presets">
+            {['솔라', '시도', '비치'].map(c => (
+              <button key={c}
+                className={'course-preset-btn' + (formData.course === c ? ' active' : '')}
+                onClick={() => setForm({ course: c })}>
+                {c}
+              </button>
+            ))}
+          </div>
+          <input type="text" className="form-input" value={formData.course}
+            placeholder="직접 입력" onChange={e => setForm({ course: e.target.value })} />
+        </div>
 
         <label className="form-label">점검자</label>
         <input type="text" className="form-input" value={formData.inspector}
