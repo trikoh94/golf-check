@@ -3,7 +3,7 @@ import { SCORE_META, SEC_KEYS, SEC_NAME, SEC_EMOJI } from '../../constants'
 import { supabase } from '../../lib/supabase'
 
 export default function SummaryPage({ onSaved }) {
-  const { formData, holeState, showToast, resetAll } = useApp()
+  const { formData, holeState, showToast, resetAll, draftId } = useApp()
 
   function avgScore(sec) {
     const inspected = Object.values(holeState[sec]).filter(h => h.score !== null)
@@ -26,7 +26,7 @@ export default function SummaryPage({ onSaved }) {
 
     const payload = {
       date,
-      club: club || '해남 파인트리 골프장',
+      club: club || '해남 파인비치 골프링크스',
       course: course || null,
       inspector,
       weather: weather || null,
@@ -45,9 +45,21 @@ export default function SummaryPage({ onSaved }) {
       tee:     holeState.tee,
       fairway: holeState.fw,
       green:   holeState.green,
+      status: 'completed',
     }
 
-    const { error } = await supabase.from('inspections').insert([payload])
+    let error = null
+
+    if (draftId) {
+      // 임시저장된 draft를 completed로 업데이트
+      const res = await supabase.from('inspections').update(payload).eq('id', draftId)
+      error = res.error
+    } else {
+      // 임시저장 없이 바로 저장
+      const res = await supabase.from('inspections').insert([payload])
+      error = res.error
+    }
+
     if (error) {
       showToast('저장 실패: ' + error.message, 'error')
     } else {
@@ -61,6 +73,12 @@ export default function SummaryPage({ onSaved }) {
   return (
     <div className="page-section">
       <h2 className="section-title">종합 요약</h2>
+
+      {draftId && (
+        <div className="draft-active-banner">
+          📋 임시저장 중인 점검 — 저장하기 클릭 시 최종 완료됩니다
+        </div>
+      )}
 
       <div className="summary-info">
         <div className="info-row"><span>점검일</span><strong>{formData.date}</strong></div>

@@ -1,18 +1,19 @@
-import { createContext, useContext, useReducer, useCallback, useState, useEffect } from 'react'
+import { createContext, useContext, useReducer, useCallback, useState, useEffect, useRef } from 'react'
 import { initAllHoles } from '../constants'
 import { uploadPhoto } from '../lib/uploadPhoto'
 import { fetchWeights, saveWeights, DEFAULT_WEIGHTS } from '../lib/scoreCalc'
+import { supabase } from '../lib/supabase'
 
 const initialForm = {
   date: new Date().toISOString().slice(0, 10),
-  club: '해남 파인트리 골프장',
+  club: '해남 파인비치 골프링크스',
   course: '',
   inspector: '',
   weather: '',
-  weatherDetail: null, // { temp, humidity, wind, dewPoint, surfaceTemp, soilTemp0, soilTemp6 }
+  weatherDetail: null,
   nextVisit: '',
   memo: '',
-  holeCount: 18,
+  holeCount: 27,
 }
 
 function makeHoleState(count) {
@@ -25,7 +26,7 @@ function makeHoleState(count) {
 
 const initialState = {
   formData: initialForm,
-  holeState: makeHoleState(18),
+  holeState: makeHoleState(27),
   toast: null,
   lightbox: null,
 }
@@ -137,11 +138,16 @@ function reducer(state, action) {
       }
     }
 
+    case 'LOAD_DRAFT': {
+      const { formData, holeState } = action.payload
+      return { ...state, formData, holeState }
+    }
+
     case 'RESET_ALL':
       return {
         ...initialState,
         formData: { ...initialForm, date: new Date().toISOString().slice(0, 10) },
-        holeState: makeHoleState(18),
+        holeState: makeHoleState(27),
       }
 
     case 'SHOW_TOAST': return { ...state, toast: action.payload }
@@ -156,9 +162,10 @@ function reducer(state, action) {
 const AppContext = createContext(null)
 
 const DRAFT_KEY = 'turf_draft_v1'
+const SUPABASE_DRAFT_KEY = 'turf_draft_supabase_id'
 
 export function AppProvider({ children }) {
-  // draft 복구: 저장된 임시 데이터가 있으면 초기 상태로 사용
+  // localStorage draft 복구: 저장된 임시 데이터가 있으면 초기 상태로 사용
   const savedDraft = (() => {
     try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) } catch { return null }
   })()
@@ -167,15 +174,119 @@ export function AppProvider({ children }) {
   const [weights, setWeightsState] = useState(DEFAULT_WEIGHTS)
   const [hasDraft] = useState(!!savedDraft)
 
+  // Supabase draft 상태
+  const [draftId, setDraftId] = useState(() => localStorage.getItem(SUPABASE_DRAFT_KEY))
+  const [supabaseDraft, setSupabaseDraft] = useState(null) // 복구할 draft 데이터
+
+  // saveDraft에서 최신 state를 참조하기 위한 ref
+  const stateRef = useRef(state)
+  useEffect(() => { stateRef.current = state }, [state])
+
   useEffect(() => {
     fetchWeights().then(w => setWeightsState(w))
   }, [])
 
-  // 상태 변경마다 draft 자동 저장 (toast/lightbox 제외)
+  // 앱 시작 시 Supabase에서 미완료 draft 확인
+  useEffect(() => {
+    const id = localStorage.getItem(SUPABASE_DRAFT_KEY)
+    if (!id) return
+    supabase
+      .from('inspections')
+      .select('id, date, inspector, course, club, status, tee, fairway, green, hole_count, weather, next_visit, memo')
+      .eq('id', id)
+      .eq('status', 'draft')
+      .maybeSingle()
+      .then(({ data, error }) => {
+        if (!error && data) {
+          setSupabaseDraft(data)
+        } else {
+          // draft가 없거나 이미 완료됨 → ID 정리
+          localStorage.removeItem(SUPABASE_DRAFT_KEY)
+          setDraftId(null)
+        }
+      })
+  }, [])
+
+  // 상태 변경마다 localStorage draft 자동 저장 (toast/lightbox 제외)
   useEffect(() => {
     const { toast, lightbox, ...saveable } = state
     localStorage.setItem(DRAFT_KEY, JSON.stringify(saveable))
   }, [state])
+
+  // Supabase에 현재 상태를 draft로 저장 (임시저장 버튼용)
+  const saveDraft = useCallback(async () => {
+    const { formData, holeState } = stateRef.current
+    const { date, club, course, inspector, weather, weatherDetail, nextVisit, memo, holeCount } = formData
+    const r = weatherDetail?._raw ?? {}
+
+    const payload = {
+      date: date || new Date().toISOString().slice(0, 10),
+      club: club || '해남 파인비치 골프링크스',
+      course: course || null,
+      inspector: inspector || null,
+      weather: weather || null,
+      temperature:    r.temperature   ?? null,
+      humidity:       r.humidity      ?? null,
+      wind_speed:     r.wind_speed    ?? null,
+      dew_point:      r.dew_point     ?? null,
+      surface_temp:   r.surface_temp  ?? null,
+      soil_temp_0:    r.soil_temp_0   ?? null,
+      soil_temp_6:    r.soil_temp_6   ?? null,
+      et_day:         r.et_day        ?? null,
+      radiation_day:  r.radiation_day ?? null,
+      next_visit: nextVisit || null,
+      memo: memo || null,
+      hole_count: holeCount,
+      tee:     holeState.tee,
+      fairway: holeState.fw,
+      green:   holeState.green,
+      status: 'draft',
+    }
+
+    const currentId = localStorage.getItem(SUPABASE_DRAFT_KEY)
+    if (currentId) {
+      const { error } = await supabase.from('inspections').update(payload).eq('id', currentId)
+      if (error) return { error }
+      return { id: currentId }
+    } else {
+      const { data, error } = await supabase.from('inspections').insert([payload]).select('id').single()
+      if (error) return { error }
+      localStorage.setItem(SUPABASE_DRAFT_KEY, data.id)
+      setDraftId(data.id)
+      return { id: data.id }
+    }
+  }, [])
+
+  // Supabase draft를 현재 state로 복구
+  const restoreSupabaseDraft = useCallback(() => {
+    if (!supabaseDraft) return
+    const count = supabaseDraft.hole_count || 27
+    const fd = {
+      date: supabaseDraft.date || new Date().toISOString().slice(0, 10),
+      club: supabaseDraft.club || '해남 파인비치 골프링크스',
+      course: supabaseDraft.course || '',
+      inspector: supabaseDraft.inspector || '',
+      weather: supabaseDraft.weather || '',
+      weatherDetail: null,
+      nextVisit: supabaseDraft.next_visit || '',
+      memo: supabaseDraft.memo || '',
+      holeCount: count,
+    }
+    const hs = {
+      tee:   supabaseDraft.tee   || initAllHoles(count),
+      fw:    supabaseDraft.fairway || initAllHoles(count),
+      green: supabaseDraft.green || initAllHoles(count),
+    }
+    dispatch({ type: 'LOAD_DRAFT', payload: { formData: fd, holeState: hs } })
+    setSupabaseDraft(null)
+  }, [supabaseDraft])
+
+  // Supabase draft 복구 거절 (새로 시작)
+  const dismissSupabaseDraft = useCallback(() => {
+    setSupabaseDraft(null)
+    localStorage.removeItem(SUPABASE_DRAFT_KEY)
+    setDraftId(null)
+  }, [])
 
   const updateWeights = useCallback(async (w) => {
     await saveWeights(w)
@@ -193,6 +304,8 @@ export function AppProvider({ children }) {
     dispatch({ type: 'SET_HOLE_DETAIL', payload: { sec, hole, detail, score, weedTypes } }), [])
   const resetAll = useCallback(() => {
     localStorage.removeItem(DRAFT_KEY)
+    localStorage.removeItem(SUPABASE_DRAFT_KEY)
+    setDraftId(null)
     dispatch({ type: 'RESET_ALL' })
   }, [])
 
@@ -225,7 +338,13 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       ...state,
-      weights, updateWeights, hasDraft,
+      weights, updateWeights,
+      hasDraft,
+      draftId,
+      supabaseDraft,
+      saveDraft,
+      restoreSupabaseDraft,
+      dismissSupabaseDraft,
       setForm, setHoleCount, activateHole, setHoleScore, setHoleUninspected,
       toggleHoleIssue, setHoleMemo, setHoleDetail, addHolePhotos, removeHolePhoto, resetAll,
       showToast, showLightbox, hideLightbox,

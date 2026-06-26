@@ -5,7 +5,11 @@ import DiseasePanel from '../../components/disease/DiseasePanel'
 const HOLE_OPTIONS = [9, 18, 27]
 
 export default function BasicInfo() {
-  const { formData, setForm, setHoleCount, hasDraft, resetAll } = useApp()
+  const {
+    formData, setForm, setHoleCount,
+    hasDraft, resetAll,
+    supabaseDraft, restoreSupabaseDraft, dismissSupabaseDraft
+  } = useApp()
   const [weatherLoading, setWeatherLoading] = useState(false)
   const [weatherError, setWeatherError] = useState(null)
 
@@ -28,12 +32,31 @@ export default function BasicInfo() {
 
   return (
     <div className="page-section">
-      {hasDraft && (
+
+      {/* Supabase 임시저장 복구 배너 (우선순위 높음) */}
+      {supabaseDraft && (
+        <div className="draft-banner draft-banner--supabase">
+          <div className="draft-banner-info">
+            <span>📋 미완료 점검이 있어요</span>
+            <span className="draft-banner-meta">
+              {supabaseDraft.date} · {supabaseDraft.inspector || '점검자 미입력'} · {supabaseDraft.hole_count}홀
+            </span>
+          </div>
+          <div className="draft-banner-actions">
+            <button className="draft-restore" onClick={restoreSupabaseDraft}>이어서 점검</button>
+            <button className="draft-discard" onClick={dismissSupabaseDraft}>새로 시작</button>
+          </div>
+        </div>
+      )}
+
+      {/* localStorage 임시 복구 배너 (Supabase 배너 없을 때만) */}
+      {!supabaseDraft && hasDraft && (
         <div className="draft-banner">
           <span>💾 이전에 작성 중이던 점검이 있어요</span>
           <button className="draft-discard" onClick={resetAll}>새로 시작</button>
         </div>
       )}
+
       <h2 className="section-title">기본 정보</h2>
       <div className="form-grid">
         <label className="form-label">점검일자</label>
@@ -46,7 +69,7 @@ export default function BasicInfo() {
 
         <label className="form-label">코스명</label>
         <input type="text" className="form-input" value={formData.course}
-          placeholder="예: A코스, 파인코스" onChange={e => setForm({ course: e.target.value })} />
+          placeholder="예: 파인, 비치, 오시아노" onChange={e => setForm({ course: e.target.value })} />
 
         <label className="form-label">점검자</label>
         <input type="text" className="form-input" value={formData.inspector}
