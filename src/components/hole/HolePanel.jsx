@@ -160,10 +160,10 @@ export default function HolePanel({ sec, holeNum, holeData, onClose }) {
         </div>
       </div>
 
-      {/* 미점검 버튼 */}
-      {hasAnyInput && (
+      {/* 미점검 버튼 - 입력값이 있을 때만 */}
+      {(hasAnyInput || score !== null) && (
         <button className="hps-uninspected-btn" onClick={handleUninspected}>
-          미점검으로 되돌리기
+          🔄 미점검으로 초기화
         </button>
       )}
     </div>

@@ -5,7 +5,7 @@ import DiseasePanel from '../../components/disease/DiseasePanel'
 const HOLE_OPTIONS = [9, 18, 27]
 
 export default function BasicInfo() {
-  const { formData, setForm, setHoleCount } = useApp()
+  const { formData, setForm, setHoleCount, hasDraft, resetAll } = useApp()
   const [weatherLoading, setWeatherLoading] = useState(false)
   const [weatherError, setWeatherError] = useState(null)
 
@@ -28,6 +28,12 @@ export default function BasicInfo() {
 
   return (
     <div className="page-section">
+      {hasDraft && (
+        <div className="draft-banner">
+          <span>💾 이전에 작성 중이던 점검이 있어요</span>
+          <button className="draft-discard" onClick={resetAll}>새로 시작</button>
+        </div>
+      )}
       <h2 className="section-title">기본 정보</h2>
       <div className="form-grid">
         <label className="form-label">점검일자</label>

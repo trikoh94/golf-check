@@ -4,15 +4,10 @@ import HoleCell from './HoleCell'
 import HolePanel from './HolePanel'
 
 export default function HoleGrid({ sec }) {
-  const { formData, holeState, activateHole } = useApp()
+  const { formData, holeState } = useApp()
   const { holeCount } = formData
   const sectionData = holeState[sec]
   const [openHole, setOpenHole] = useState(null)
-
-  function handleCellClick(holeNum) {
-    activateHole(sec, holeNum)
-    setOpenHole(holeNum)
-  }
 
   const blocks = []
   for (let start = 1; start <= holeCount; start += 9) {
@@ -35,7 +30,7 @@ export default function HoleGrid({ sec }) {
                   holeNum={n}
                   holeData={sectionData[n]}
                   isOpen={openHole === n}
-                  onClick={() => handleCellClick(n)}
+                  onClick={() => setOpenHole(n)}
                 />
               ))}
             </div>

@@ -155,13 +155,27 @@ function reducer(state, action) {
 
 const AppContext = createContext(null)
 
+const DRAFT_KEY = 'turf_draft_v1'
+
 export function AppProvider({ children }) {
-  const [state, dispatch] = useReducer(reducer, initialState)
+  // draft 복구: 저장된 임시 데이터가 있으면 초기 상태로 사용
+  const savedDraft = (() => {
+    try { return JSON.parse(localStorage.getItem(DRAFT_KEY)) } catch { return null }
+  })()
+
+  const [state, dispatch] = useReducer(reducer, savedDraft ?? initialState)
   const [weights, setWeightsState] = useState(DEFAULT_WEIGHTS)
+  const [hasDraft] = useState(!!savedDraft)
 
   useEffect(() => {
     fetchWeights().then(w => setWeightsState(w))
   }, [])
+
+  // 상태 변경마다 draft 자동 저장 (toast/lightbox 제외)
+  useEffect(() => {
+    const { toast, lightbox, ...saveable } = state
+    localStorage.setItem(DRAFT_KEY, JSON.stringify(saveable))
+  }, [state])
 
   const updateWeights = useCallback(async (w) => {
     await saveWeights(w)
@@ -177,7 +191,10 @@ export function AppProvider({ children }) {
   const setHoleMemo = useCallback((sec, hole, memo) => dispatch({ type: 'SET_HOLE_MEMO', payload: { sec, hole, memo } }), [])
   const setHoleDetail = useCallback((sec, hole, detail, score, weedTypes) =>
     dispatch({ type: 'SET_HOLE_DETAIL', payload: { sec, hole, detail, score, weedTypes } }), [])
-  const resetAll = useCallback(() => dispatch({ type: 'RESET_ALL' }), [])
+  const resetAll = useCallback(() => {
+    localStorage.removeItem(DRAFT_KEY)
+    dispatch({ type: 'RESET_ALL' })
+  }, [])
 
   const addHolePhotos = useCallback(async (sec, hole, files) => {
     const date = new Date().toISOString().slice(0, 10)
@@ -208,7 +225,7 @@ export function AppProvider({ children }) {
   return (
     <AppContext.Provider value={{
       ...state,
-      weights, updateWeights,
+      weights, updateWeights, hasDraft,
       setForm, setHoleCount, activateHole, setHoleScore, setHoleUninspected,
       toggleHoleIssue, setHoleMemo, setHoleDetail, addHolePhotos, removeHolePhoto, resetAll,
       showToast, showLightbox, hideLightbox,
