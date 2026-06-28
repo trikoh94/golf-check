@@ -10,6 +10,7 @@ import MapView from './pages/MapView'
 import WorkCheck from './pages/WorkCheck'
 import WorkerView from './pages/WorkerView'
 import AdminSettings from './pages/AdminSettings'
+import DiseaseCalendar from './pages/DiseaseCalendar'
 
 const isWorker = window.location.pathname.startsWith('/worker')
 
@@ -44,6 +45,7 @@ function AppInner() {
         {tab === 'new'       && <NewRecord onSaved={() => handleTabChange('list')} />}
         {tab === 'list'      && !selectedId && <RecordList onSelect={id => setSelectedId(id)} />}
         {tab === 'list'      && selectedId  && <RecordDetail id={selectedId} onBack={() => setSelectedId(null)} />}
+        {tab === 'disease'   && <DiseaseCalendar />}
         {tab === 'map'       && <MapView />}
         {tab === 'workcheck' && <WorkCheck />}
         {tab === 'settings'  && <AdminSettings />}

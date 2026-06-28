@@ -2,6 +2,7 @@ export default function Header({ tab, onTabChange }) {
   const tabs = [
     { key: 'new',       label: '✏️ 점검' },
     { key: 'list',      label: '📋 기록' },
+    { key: 'disease',   label: '🦠 병해' },
     { key: 'workcheck', label: '✅ 작업확인' },
     { key: 'map',       label: '🗺️ 지도' },
     { key: 'settings',  label: '⚙️ 설정' },
