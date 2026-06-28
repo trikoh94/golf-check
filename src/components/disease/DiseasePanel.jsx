@@ -14,10 +14,7 @@ const WEEK_DAYS = ['일','월','화','수','목','금','토']
 function formatDate(dateStr) {
   if (!dateStr) return ''
   const d = new Date(dateStr)
-  const m = d.getMonth() + 1
-  const day = d.getDate()
-  const wd = WEEK_DAYS[d.getDay()]
-  return `${m}/${day}(${wd})`
+  return `${d.getMonth()+1}/${d.getDate()}(${WEEK_DAYS[d.getDay()]})`
 }
 
 function RiskBar({ value, color }) {
@@ -28,35 +25,35 @@ function RiskBar({ value, color }) {
   )
 }
 
-// 관리 권고 로직
 function getRecommendations(risks) {
   const recs = []
-  const bentHighRisk = risks.find(r =>
-    (r.grass_type === 'bentgrass') && (r.level === '위험' || r.level === '주의')
-  )
-  const pythium = risks.find(r => r.name === '피시움 블라이트')
-  const brownPatch = risks.find(r => r.name === '브라운패치')
-  const dollarSpot = risks.find(r => r.name === '달러스팟')
-  const grayLeaf = risks.find(r => r.name?.includes('잿빛'))
+  const anthracnose = risks.find(r => r.name === '탄저병')
+  const pythium     = risks.find(r => r.name === '피시움 블라이트')
+  const brownPatch  = risks.find(r => r.name === '브라운패치')
+  const dollarSpot  = risks.find(r => r.name === '달러스팟')
+  const grayLeaf    = risks.find(r => r.name?.includes('잿빛'))
 
   if (pythium && pythium.score >= 50) {
-    recs.push({ icon: '🚨', text: '피시움 블라이트 즉각 대응 — 야간 경보 발령. mefenoxam/chloroneb 계열 약제 처리 검토', urgent: true })
+    recs.push({ icon: '🚨', text: '피시움 블라이트 즉각 대응 — 야간 순찰 강화, 살균제 처리 검토 (담당자 연락)', urgent: true })
   }
-  if (brownPatch && brownPatch.score >= 50) {
-    recs.push({ icon: '⚠️', text: '브라운패치 예방: 이른 아침 관수(이슬 제거), azoxystrobin/trifloxystrobin 예방 처리 검토' })
+  if (anthracnose && anthracnose.score >= 40) {
+    recs.push({ icon: '🔥', text: '탄저병 주의: 고온 스트레스 완화 최우선. 낮 사이드 관수로 지면 냉각, 질소 분시 소량 시비 검토', urgent: anthracnose.score >= 70 })
   }
-  if (brownPatch || pythium) {
-    recs.push({ icon: '💧', text: '그린 야간 수분 제거: 이른 아침 폴링/스와이핑으로 이슬·구타물 제거' })
-    recs.push({ icon: '🌡️', text: '벤트그래스 스트레스 완화: 야간 팬/써큘레이터 가동, 낮 관수 억제' })
+  if (anthracnose || pythium || brownPatch) {
+    recs.push({ icon: '💧', text: '이른 아침 그린 폴링/스와이핑으로 이슬·구타물 제거 (병 확산 차단)' })
+    recs.push({ icon: '🌡️', text: '야간 팬·써큘레이터 가동으로 그린 기온 저하 및 공기 순환 유지' })
   }
-  if (dollarSpot && dollarSpot.score >= 50) {
-    recs.push({ icon: '🌿', text: '달러스팟 대응: 질소 시비량 확인 (저질소 조건 악화). thiophanate-methyl 예방 처리' })
+  if (brownPatch && brownPatch.score >= 55) {
+    recs.push({ icon: '⚠️', text: '브라운패치: 야간최저 21도 이상 지속 시 예방 살균제 처리 검토' })
+  }
+  if (dollarSpot && dollarSpot.score >= 60) {
+    recs.push({ icon: '🌿', text: '달러스팟: 질소 시비량 점검 (저질소 조건에서 악화), 예방 처리 검토' })
   }
   if (grayLeaf && grayLeaf.score >= 50) {
-    recs.push({ icon: '🌾', text: '고려지 잿빛곰팡이: 페어웨이 배수 개선, azoxystrobin 처리 검토' })
+    recs.push({ icon: '🌾', text: '고려지 잿빛곰팡이: 페어웨이 배수 개선, 살균제 처리 검토' })
   }
   if (!recs.length && risks.length) {
-    recs.push({ icon: '👁️', text: '현재 수준 모니터링 유지. 병반 초기 징후 발견 시 즉시 보고' })
+    recs.push({ icon: '👁️', text: '현재 수준 모니터링 유지. 병반 초기 징후 발견 즉시 보고' })
   }
   return recs
 }
@@ -64,15 +61,14 @@ function getRecommendations(risks) {
 export default function DiseasePanel({ weatherRaw }) {
   if (!weatherRaw) return null
 
-  const risks = calcDiseaseRisk(weatherRaw)
+  const risks    = calcDiseaseRisk(weatherRaw)
   const forecast = calcForecastRisk(weatherRaw.forecast7d ?? [])
-  const recs = getRecommendations(risks)
+  const recs     = getRecommendations(risks)
 
   return (
     <div className="disease-panel">
       <div className="dp-title">🔬 병해 위험도 분석</div>
 
-      {/* 현재 위험도 */}
       {risks.length === 0 ? (
         <div className="dp-safe">✅ 현재 기상 조건상 병해 발생 위험 낮음</div>
       ) : (
@@ -95,23 +91,18 @@ export default function DiseasePanel({ weatherRaw }) {
                   </div>
                 </div>
                 <span className="dp-pathogen">{r.pathogen}</span>
-
                 <div className="dp-bar-wrap">
                   <div className="dp-bar" style={{ width: `${r.score}%`, background: r.color }} />
                 </div>
-
                 <div className="dp-sections">
                   발생 구역: {r.section.map(s => ({tee:'티잉',fw:'페어웨이',green:'그린'}[s])).join(' · ')}
                 </div>
-
                 <div className="dp-reasons">
                   {r.reasons.map((reason, i) => (
                     <div key={i} className="dp-reason">• {reason}</div>
                   ))}
                 </div>
-
                 <div className="dp-desc">{r.description}</div>
-
                 {r.urgent && (
                   <div className="dp-urgent">🚨 즉각 대응 필요 — 약제 처리 검토</div>
                 )}
@@ -121,7 +112,6 @@ export default function DiseasePanel({ weatherRaw }) {
         </div>
       )}
 
-      {/* 7일 예보 타임라인 */}
       {forecast.length > 0 && (
         <div className="dp-forecast">
           <div className="dp-forecast-title">📅 7일 예보 위험도</div>
@@ -151,7 +141,6 @@ export default function DiseasePanel({ weatherRaw }) {
         </div>
       )}
 
-      {/* 관리 권고사항 */}
       {recs.length > 0 && (
         <div className="dp-recs">
           <div className="dp-recs-title">📋 관리 권고사항</div>

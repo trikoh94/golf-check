@@ -6,22 +6,23 @@
  *   zoysia     → 한국잔디/고려지 (티/페어웨이) — 난지형
  *
  * 참고 모델:
- *   Brown Patch  : Smith-Kerns (1981), Fidanza et al. (1996)
- *   Dollar Spot  : Danneberger & Vargas (1984), Karsten (1994)
- *   Pythium      : Nutter et al. (1983)
- *   Large Patch  : 농촌진흥청, 한국잔디학회
+ *   Anthracnose : Crouch et al. (2006), Vargas & Detweiler (2004)
+ *   Brown Patch : Smith-Kerns (1981) — 야간최저 21°C 이상이 핵심 조건
+ *   Dollar Spot : Danneberger & Vargas (1984)
+ *   Pythium     : Nutter et al. (1983)
+ *   Large Patch : 농촌진흥청, 한국잔디학회
  *   Gray Leaf Spot: Braverman & Dernoeden (2007)
  */
 
 export const DISEASES = {
-  brownPatch: {
-    name: '브라운패치',
-    nameEn: 'Brown Patch',
-    pathogen: 'Rhizoctonia solani AG1-1B',
+  anthracnose: {
+    name: '탄저병',
+    nameEn: 'Anthracnose',
+    pathogen: 'Colletotrichum cereale',
     grass_type: 'bentgrass',
     section: ['green'],
-    color: '#dc2626',
-    description: '여름 고온다습 시 벤트그래스 그린에서 급격히 확산. 원형 갈변 패치 형성. 야간기온 21°C 이상이 핵심 조건.',
+    color: '#b45309',
+    description: '여름 폭염 시 벤트그래스 그린에 발생. 기저부 괴저(Basal Rot)와 엽신 고사. 고온+저질소+스트레스 복합 발생. 한국 7~8월 집중.',
   },
   pythium: {
     name: '피시움 블라이트',
@@ -30,8 +31,17 @@ export const DISEASES = {
     grass_type: 'bentgrass',
     section: ['green', 'fw'],
     color: '#7c3aed',
-    description: '가장 파괴적. 야간 고온+고습 시 수 시간 내 급속 확산. 즉각 대응 필요.',
+    description: '가장 파괴적. 야간최저 20°C + 낮 기온 30°C 이상 시 수 시간 내 급속 확산. 즉각 대응 필요.',
     urgent: true,
+  },
+  brownPatch: {
+    name: '브라운패치',
+    nameEn: 'Brown Patch',
+    pathogen: 'Rhizoctonia solani AG1-1B',
+    grass_type: 'bentgrass',
+    section: ['green'],
+    color: '#dc2626',
+    description: '야간최저 21°C 이상 + 고습 조건에서 벤트그래스 그린에 원형 갈변 패치 형성.',
   },
   dollarSpot: {
     name: '달러스팟',
@@ -40,7 +50,7 @@ export const DISEASES = {
     grass_type: 'all',
     section: ['green', 'fw', 'tee'],
     color: '#d97706',
-    description: '봄~가을 온난다습 시 발생. 은화 크기 원형 반점. 저질소 조건에서 악화.',
+    description: '봄~가을 온난다습 + 저질소 조건에서 발생. 은화 크기 원형 반점.',
   },
   largePatch: {
     name: '라지패치',
@@ -83,25 +93,25 @@ export function calcDiseaseRisk(w) {
 
   const risks = []
 
-  // 1. 브라운패치 (벤트그래스 그린)
-  if (ta != null && hm != null) {
+  // 1. 탄저병 (벤트그래스 그린 — 여름 폭염 핵심)
+  // 고온 스트레스 + 저질소가 주원인. 습도보다 기온이 핵심.
+  if (ta != null) {
     let score = 0
     const reasons = []
-    if (ta >= 21 && ta <= 35) { score += 20; reasons.push(`기온 ${ta}°C (21~35°C 위험구간)`) }
-    if (ta >= 26)              { score += 15; reasons.push('기온 26°C 초과') }
-    if (tn != null && tn >= 21){ score += 30; reasons.push(`야간최저 ${tn}°C ≥ 21°C ★`) }
-    else if (tn == null)       { score += 10; reasons.push('야간최저기온 미확인 (주의)') }
-    if (dp != null && dp >= 16){ score += 20; reasons.push(`이슬점 ${dp}°C ≥ 16°C`) }
-    if (hm >= 90)              { score += 10; reasons.push(`습도 ${hm}% ≥ 90%`) }
-    if (hm >= 95)              { score +=  5; reasons.push('습도 95% 초과') }
-    if (rain > 0)              { score +=  5; reasons.push('강수 발생') }
-    if (score >= 30) {
-      risks.push({ ...DISEASES.brownPatch, score: Math.min(score, 100),
+    if (ta >= 28)              { score += 30; reasons.push(`기온 ${ta}°C ≥ 28°C (발생 임계값)`) }
+    if (ta >= 32)              { score += 20; reasons.push('기온 32°C 초과 — 고온 스트레스 급증') }
+    if (ta >= 35)              { score += 15; reasons.push('기온 35°C 초과 — 극단적 열 스트레스') }
+    if (tn != null && tn >= 22){ score += 20; reasons.push(`야간최저 ${tn}°C ≥ 22°C (고온야 지속)`) }
+    if (ts != null && ts >= 25){ score += 20; reasons.push(`지면온도 ${ts}°C ≥ 25°C`) }
+    if (et != null && et >= 5) { score += 15; reasons.push(`ET ${et.toFixed(1)}mm — 고증발산 (열 스트레스)`) }
+    if (hm != null && hm < 60) { score += 10; reasons.push('저습 고온 — 잔디 생리 스트레스') }
+    if (score >= 40) {
+      risks.push({ ...DISEASES.anthracnose, score: Math.min(score, 100),
         level: score >= 70 ? '위험' : score >= 50 ? '주의' : '관찰', reasons })
     }
   }
 
-  // 2. 피시움 블라이트 (벤트그래스)
+  // 2. 피시움 블라이트 (벤트그래스 — 야간최저 20°C+ 가 핵심)
   if (ta != null && hm != null) {
     let score = 0
     const reasons = []
@@ -117,7 +127,25 @@ export function calcDiseaseRisk(w) {
     }
   }
 
-  // 3. 달러스팟 (전체)
+  // 3. 브라운패치 (야간최저 21°C 이상이 필수 조건)
+  // tn이 null이거나 21°C 미만이면 표시 안 함
+  if (ta != null && hm != null && tn != null && tn >= 19) {
+    let score = 0
+    const reasons = []
+    if (ta >= 21 && ta <= 35)  { score += 15; reasons.push(`기온 ${ta}°C (21~35°C 위험구간)`) }
+    if (ta >= 26)              { score += 10; reasons.push('기온 26°C 초과') }
+    if (tn >= 21)              { score += 35; reasons.push(`야간최저 ${tn}°C ≥ 21°C ★ 핵심 조건`) }
+    else if (tn >= 19)         { score += 15; reasons.push(`야간최저 ${tn}°C (21°C 접근 중)`) }
+    if (dp != null && dp >= 16){ score += 20; reasons.push(`이슬점 ${dp}°C ≥ 16°C`) }
+    if (hm >= 90)              { score += 10; reasons.push(`습도 ${hm}% ≥ 90%`) }
+    if (rain > 0)              { score +=  5; reasons.push('강수 발생') }
+    if (score >= 45) {
+      risks.push({ ...DISEASES.brownPatch, score: Math.min(score, 100),
+        level: score >= 70 ? '위험' : score >= 55 ? '주의' : '관찰', reasons })
+    }
+  }
+
+  // 4. 달러스팟 — 문턱 높임 (이 코스 발현 적음)
   if (ta != null && hm != null) {
     let score = 0
     const reasons = []
@@ -126,15 +154,15 @@ export function calcDiseaseRisk(w) {
     if (dp != null && dp >= 10){ score += 25; reasons.push(`이슬점 ${dp}°C ≥ 10°C`) }
     if (dp != null && dp >= 15){ score += 10; reasons.push('이슬점 15°C 초과') }
     if (hm >= 80)              { score += 15; reasons.push(`습도 ${hm}% ≥ 80%`) }
-    if (et != null && et < 3)  { score += 15; reasons.push(`ET ${et?.toFixed(1)}mm — 잎면 장기 습윤`) }
+    if (et != null && et < 3)  { score += 15; reasons.push(`ET ${et.toFixed(1)}mm — 잎면 장기 습윤`) }
     if (rain > 0)              { score +=  5; reasons.push('강수 발생') }
-    if (score >= 35) {
+    if (score >= 55) {   // 35→55로 문턱 올림
       risks.push({ ...DISEASES.dollarSpot, score: Math.min(score, 100),
-        level: score >= 70 ? '위험' : score >= 50 ? '주의' : '관찰', reasons })
+        level: score >= 70 ? '위험' : score >= 60 ? '주의' : '관찰', reasons })
     }
   }
 
-  // 4. 라지패치 (고려지 — 봄/가을, 토양온도 10~18°C)
+  // 5. 라지패치 (고려지 — 봄/가을 전용)
   if (ta != null) {
     let score = 0
     const reasons = []
@@ -150,7 +178,7 @@ export function calcDiseaseRisk(w) {
     }
   }
 
-  // 5. 잿빛곰팡이 (고려지)
+  // 6. 잿빛곰팡이 (고려지)
   if (ta != null && hm != null) {
     let score = 0
     const reasons = []
@@ -171,8 +199,6 @@ export function calcDiseaseRisk(w) {
 
 /**
  * 7일 예보 → 날짜별 병해 위험도 요약
- * @param {Array} forecast7d  [{date, t_max, t_min, humidity, dew_point, rain}]
- * @returns {Array} [{date, t_max, t_min, bentgrassRisk, zoysiaRisk, level, topDisease, rain}]
  */
 export function calcForecastRisk(forecast7d) {
   if (!Array.isArray(forecast7d)) return []
