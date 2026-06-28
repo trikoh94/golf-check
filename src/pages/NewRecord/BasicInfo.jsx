@@ -1,6 +1,5 @@
 import { useState } from 'react'
 import { useApp } from '../../context/AppContext'
-import DiseasePanel from '../../components/disease/DiseasePanel'
 
 const HOLE_OPTIONS = [9, 18, 27]
 
@@ -145,19 +144,9 @@ export default function BasicInfo() {
                   다시 불러오기
                 </button>
               </div>
-              <DiseasePanel weatherRaw={wd._raw} />
             </>
           )}
           {weatherError && <div className="weather-error">⚠️ {weatherError}</div>}
-        </div>
-
-        <label className="form-label">토양온도</label>
-        <div className="soil-temp-row">
-          <input type="number" className="form-input soil-temp-input" step="0.1" min="-10" max="50"
-            placeholder="예: 18.5"
-            value={formData.soilTemp ?? ''}
-            onChange={e => setForm({ soilTemp: e.target.value ? parseFloat(e.target.value) : null })} />
-          <span className="soil-temp-unit">°C · 10cm 실측</span>
         </div>
 
         <label className="form-label">다음 점검</label>

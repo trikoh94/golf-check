@@ -14,6 +14,7 @@ export const METRICS = [
   { key: 'renovation',   label: '갱신관리', emoji: '🔄', dir: 'good', sections: ['tee','fw','green'] },
   { key: 'rootLength',   label: '뿌리길이', emoji: '🌱', dir: 'good', sections: ['tee','fw','green'] },
   { key: 'moisture',     label: '수분',     emoji: '💧', dir: 'range', sections: ['tee','fw','green'], unit: '%' },
+  { key: 'soilTemp',    label: '토양온도', emoji: '🌡️', dir: 'range', sections: ['tee','fw','green'], unit: '°C' },
   { key: 'greenSpeed',   label: '그린스피드', emoji: '⚡', dir: 'info', sections: ['green'], unit: 'ft' },
 ]
 
