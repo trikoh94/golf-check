@@ -584,6 +584,33 @@ textarea.form-input { resize: vertical; }
 .dp-reason { font-size: .75rem; color: #374151; }
 .dp-desc { font-size: .75rem; color: #6b7280; line-height: 1.4; }
 .dp-urgent { margin-top: .4rem; font-size: .78rem; font-weight: 700; color: #dc2626; background: #fef2f2; border-radius: .35rem; padding: .3rem .5rem; }
+
+/* 잔디종 배지 */
+.dp-name-row { display: flex; align-items: center; gap: .4rem; flex-wrap: wrap; }
+.dp-grass-badge { font-size: .65rem; font-weight: 700; padding: .1rem .45rem; border-radius: 999px; white-space: nowrap; }
+
+/* 7일 예보 타임라인 */
+.dp-forecast { margin-top: 1rem; background: #f8fafc; border-radius: .6rem; padding: .7rem .8rem; }
+.dp-forecast-title { font-weight: 700; font-size: .85rem; color: #1a3d2b; margin-bottom: .3rem; }
+.dp-forecast-legend { display: flex; gap: .75rem; font-size: .7rem; margin-bottom: .5rem; color: #374151; }
+.dp-forecast-grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: .25rem; }
+.dp-forecast-day { display: flex; flex-direction: column; align-items: center; gap: .15rem; }
+.dp-fd-date { font-size: .65rem; color: #6b7280; font-weight: 600; white-space: nowrap; }
+.dp-fd-temp { display: flex; flex-direction: column; align-items: center; line-height: 1.2; }
+.dp-fd-tmax { font-size: .72rem; font-weight: 700; color: #dc2626; }
+.dp-fd-tmin { font-size: .68rem; color: #2563eb; }
+.dp-fd-rain { font-size: .6rem; color: #2563eb; }
+.dp-fd-bars { display: flex; flex-direction: column; gap: 2px; width: 100%; }
+.dp-mini-bar-wrap { height: 5px; background: rgba(0,0,0,.08); border-radius: 999px; overflow: hidden; }
+.dp-mini-bar { height: 100%; border-radius: 999px; transition: width .3s; min-width: 2px; }
+.dp-fd-level { font-size: .62rem; font-weight: 700; color: #6b7280; }
+
+/* 관리 권고사항 */
+.dp-recs { margin-top: .75rem; background: #fffbeb; border: 1px solid #fde68a; border-radius: .6rem; padding: .6rem .75rem; }
+.dp-recs-title { font-size: .82rem; font-weight: 700; color: #92400e; margin-bottom: .4rem; }
+.dp-rec { display: flex; gap: .5rem; font-size: .78rem; color: #374151; padding: .2rem 0; line-height: 1.4; }
+.dp-rec--urgent { color: #dc2626; font-weight: 600; }
+
 .wc-minmax { font-size: .75rem; color: #6b7280; margin-left: .25rem; align-self: flex-end; padding-bottom: .1rem; }
 
 /* ── Worker View ────────────────── */

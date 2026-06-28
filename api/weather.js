@@ -7,8 +7,8 @@ export default async function handler(req, res) {
     + `?latitude=${LAT}&longitude=${LON}`
     + `&current=temperature_2m,relative_humidity_2m,precipitation,wind_speed_10m,weather_code,dew_point_2m,surface_temperature,shortwave_radiation`
     + `&hourly=soil_temperature_0cm,soil_temperature_6cm,soil_temperature_18cm,et0_fao_evapotranspiration,temperature_2m,relative_humidity_2m`
-    + `&daily=et0_fao_evapotranspiration,precipitation_sum,shortwave_radiation_sum,temperature_2m_min,temperature_2m_max`
-    + `&timezone=Asia%2FSeoul&forecast_days=1&past_days=1`
+    + `&daily=et0_fao_evapotranspiration,precipitation_sum,shortwave_radiation_sum,temperature_2m_min,temperature_2m_max,relative_humidity_2m_max,dew_point_2m_max`
+    + `&timezone=Asia%2FSeoul&forecast_days=7&past_days=1`
 
   try {
     const resp = await fetch(url)
@@ -34,10 +34,25 @@ export default async function handler(req, res) {
     const soil0  = hourly.soil_temperature_0cm?.[hourIdx]
     const soil6  = hourly.soil_temperature_6cm?.[hourIdx]
     const soil18 = hourly.soil_temperature_18cm?.[hourIdx]
-    const etDay  = daily.et0_fao_evapotranspiration?.[1] // 오늘
+    const etDay  = daily.et0_fao_evapotranspiration?.[1] // 오늘 (index 0 = 어제)
     const radDay = daily.shortwave_radiation_sum?.[1]
     const tMin   = daily.temperature_2m_min?.[1]
     const tMax   = daily.temperature_2m_max?.[1]
+
+    // 7일 예보 배열 (오늘 포함 7일, index 1~7)
+    const forecast7d = []
+    for (let i = 1; i <= 7; i++) {
+      const d = daily.time?.[i]
+      if (!d) break
+      forecast7d.push({
+        date:      d,
+        t_max:     daily.temperature_2m_max?.[i]       ?? null,
+        t_min:     daily.temperature_2m_min?.[i]       ?? null,
+        humidity:  daily.relative_humidity_2m_max?.[i] ?? null,
+        dew_point: daily.dew_point_2m_max?.[i]         ?? null,
+        rain:      daily.precipitation_sum?.[i]        ?? null,
+      })
+    }
 
     const code = c.weather_code
     let weatherText = '맑음', emoji = '☀️'
@@ -66,6 +81,7 @@ export default async function handler(req, res) {
       tMin:         tMin   != null ? `${tMin}°C` : null,
       tMax:         tMax   != null ? `${tMax}°C` : null,
       nightMinTemp: nightMinTemp != null ? `${nightMinTemp.toFixed(1)}°C` : null,
+      forecast7d,
       _raw: {
         temperature:   c.temperature_2m,
         humidity:      c.relative_humidity_2m,
@@ -80,6 +96,7 @@ export default async function handler(req, res) {
         t_max:         tMax,
         night_min:     nightMinTemp,
         precipitation: c.precipitation,
+        forecast7d,
       }
     })
   } catch (e) {
