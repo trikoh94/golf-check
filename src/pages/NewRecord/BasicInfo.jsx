@@ -138,6 +138,15 @@ export default function BasicInfo() {
           {weatherError && <div className="weather-error">⚠️ {weatherError}</div>}
         </div>
 
+        <label className="form-label">토양온도(10cm)</label>
+        <div className="soil-temp-row">
+          <input type="number" className="form-input" step="0.1" min="-10" max="50"
+            placeholder="예: 18.5"
+            value={formData.soilTemp ?? ''}
+            onChange={e => setForm({ soilTemp: e.target.value ? parseFloat(e.target.value) : null })} />
+          <span className="soil-temp-unit">°C  실측값</span>
+        </div>
+
         <label className="form-label">다음 점검</label>
         <input type="date" className="form-input" value={formData.nextVisit}
           onChange={e => setForm({ nextVisit: e.target.value })} />

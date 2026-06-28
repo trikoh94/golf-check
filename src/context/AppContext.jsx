@@ -14,6 +14,7 @@ const initialForm = {
   nextVisit: '',
   memo: '',
   holeCount: 9,
+  soilTemp: null,
 }
 
 function makeHoleState(count) {
@@ -230,6 +231,7 @@ export function AppProvider({ children }) {
       next_visit: nextVisit || null,
       memo: memo || null,
       hole_count: holeCount,
+      soil_temp_measured: formData.soilTemp ?? null,
       tee:     holeState.tee,
       fairway: holeState.fw,
       green:   holeState.green,

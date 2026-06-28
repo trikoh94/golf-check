@@ -163,13 +163,15 @@ export function calcDiseaseRisk(w) {
   }
 
   // 5. 라지패치 (고려지 — 봄/가을 전용)
-  if (ta != null) {
+  // 기온 18°C 초과 시 여름 → 발생 가능성 없음, 계산 스킵
+  if (ta != null && ta <= 18) {
     let score = 0
     const reasons = []
-    const soilT = ts ?? (ta - 3)
+    // 토양온도: 실측값 우선, 없으면 기온 기반 추정 (봄/가을 기준)
+    const soilT = ts ?? (ta - 1)
     if (soilT >= 10 && soilT <= 18) { score += 40; reasons.push(`토양온도 ${soilT.toFixed(1)}°C (10~18°C 위험구간)`) }
     if (soilT >= 13 && soilT <= 16) { score += 20; reasons.push('최적 발생 토양온도 13~16°C') }
-    if (ta <= 22)                   { score += 15; reasons.push(`기온 ${ta}°C ≤ 22°C`) }
+    if (ta <= 18)                   { score += 15; reasons.push(`기온 ${ta}°C ≤ 18°C (봄/가을 구간)`) }
     if (hm != null && hm >= 80)     { score += 15; reasons.push(`습도 ${hm}% ≥ 80%`) }
     if (rain > 0)                   { score += 10; reasons.push('강수 발생') }
     if (score >= 35) {
