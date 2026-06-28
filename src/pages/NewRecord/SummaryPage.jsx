@@ -26,7 +26,7 @@ export default function SummaryPage({ onSaved }) {
 
     const payload = {
       date,
-      club: club || '해남 파인비치 골프링크스',
+      club: club || '솔라시도 골프클럽',
       course: course || null,
       inspector,
       weather: weather || null,

@@ -4,6 +4,12 @@ import DiseasePanel from '../../components/disease/DiseasePanel'
 
 const HOLE_OPTIONS = [9, 18, 27]
 
+const CLUB_CONFIG = {
+  '솔라시도 골프클럽': { courses: ['솔라', '시도', '비치'] },
+  '파인비치 골프장':   { courses: ['파인', '비치'] },
+}
+const CLUB_NAMES = Object.keys(CLUB_CONFIG)
+
 export default function BasicInfo() {
   const {
     formData, setForm, setHoleCount,
@@ -28,12 +34,17 @@ export default function BasicInfo() {
     }
   }
 
+  function handleClubChange(club) {
+    setForm({ club, course: '' })
+  }
+
   const wd = formData.weatherDetail
+  const currentClub = CLUB_NAMES.includes(formData.club) ? formData.club : CLUB_NAMES[0]
+  const courseOptions = CLUB_CONFIG[currentClub]?.courses ?? []
 
   return (
     <div className="page-section">
 
-      {/* Supabase 임시저장 복구 배너 (우선순위 높음) */}
       {supabaseDraft && (
         <div className="draft-banner draft-banner--supabase">
           <div className="draft-banner-info">
@@ -49,7 +60,6 @@ export default function BasicInfo() {
         </div>
       )}
 
-      {/* localStorage 임시 복구 배너 (Supabase 배너 없을 때만) */}
       {!supabaseDraft && hasDraft && (
         <div className="draft-banner">
           <span>💾 이전에 작성 중이던 점검이 있어요</span>
@@ -63,14 +73,21 @@ export default function BasicInfo() {
         <input type="date" className="form-input" value={formData.date}
           onChange={e => setForm({ date: e.target.value })} />
 
-        <label className="form-label">골프장명</label>
-        <input type="text" className="form-input" value={formData.club}
-          onChange={e => setForm({ club: e.target.value })} />
+        <label className="form-label">골프장</label>
+        <div className="club-toggle">
+          {CLUB_NAMES.map(name => (
+            <button key={name}
+              className={'club-toggle-btn' + (currentClub === name ? ' active' : '')}
+              onClick={() => handleClubChange(name)}>
+              {name}
+            </button>
+          ))}
+        </div>
 
         <label className="form-label">코스명</label>
         <div className="course-select-wrap">
           <div className="course-presets">
-            {['솔라', '시도', '비치'].map(c => (
+            {courseOptions.map(c => (
               <button key={c}
                 className={'course-preset-btn' + (formData.course === c ? ' active' : '')}
                 onClick={() => setForm({ course: c })}>
@@ -99,8 +116,7 @@ export default function BasicInfo() {
         <div className="weather-section">
           <button
             className={'btn-weather-fetch' + (weatherLoading ? ' loading' : '')}
-            onClick={fetchWeather} disabled={weatherLoading}
-          >
+            onClick={fetchWeather} disabled={weatherLoading}>
             {weatherLoading ? '📡 불러오는 중...' : '📡 현재 날씨 불러오기 (해남)'}
           </button>
 
@@ -129,22 +145,19 @@ export default function BasicInfo() {
                   다시 불러오기
                 </button>
               </div>
-
-              {/* 관리자 전용: 병해 위험도 */}
               <DiseasePanel weatherRaw={wd._raw} />
             </>
           )}
-
           {weatherError && <div className="weather-error">⚠️ {weatherError}</div>}
         </div>
 
-        <label className="form-label">토양온도(10cm)</label>
+        <label className="form-label">토양온도</label>
         <div className="soil-temp-row">
-          <input type="number" className="form-input" step="0.1" min="-10" max="50"
+          <input type="number" className="form-input soil-temp-input" step="0.1" min="-10" max="50"
             placeholder="예: 18.5"
             value={formData.soilTemp ?? ''}
             onChange={e => setForm({ soilTemp: e.target.value ? parseFloat(e.target.value) : null })} />
-          <span className="soil-temp-unit">°C  실측값</span>
+          <span className="soil-temp-unit">°C · 10cm 실측</span>
         </div>
 
         <label className="form-label">다음 점검</label>
