@@ -1,22 +1,13 @@
 import * as XLSX from 'xlsx'
 import JSZip from 'jszip'
 import { SCORE_META } from '../constants'
+import { METRICS } from './scoreCalc'
 
-const METRIC_LABELS = {
-  colorDensity: '색상밀도',
-  weedGrass:    '이종잔디',
-  disease:      '병해',
-  compaction:   '답압피해',
-  repairArea:   '보식지',
-  edgeMgmt:     '선관리',
-  renovation:   '갱신관리',
-  rootLength:   '뿌리길이',
-}
-
-const SCORE_METRICS_KEYS = ['colorDensity','weedGrass','disease','compaction','repairArea','edgeMgmt','renovation','rootLength']
-
-function secToRows(secData, includeGreenSpeed = false) {
+function secToRows(secData, sec) {
   if (!secData) return []
+  const secMetrics     = METRICS.filter(m => m.sections.includes(sec) && (m.dir === 'good' || m.dir === 'bad'))
+  const secRangeMetrics = METRICS.filter(m => m.sections.includes(sec) && (m.dir === 'range' || m.dir === 'info'))
+
   return Object.entries(secData)
     .map(([num, h]) => {
       const detail = h.detail || {}
@@ -30,15 +21,12 @@ function secToRows(secData, includeGreenSpeed = false) {
         '종합점수': h.score ?? '',
         '등급': h.score != null ? (SCORE_META[h.score]?.label ?? '') : '',
       }
-      SCORE_METRICS_KEYS.forEach(k => { row[METRIC_LABELS[k]] = detail[k] ?? '' })
-      row['수분(%)'] = detail.moisture ?? ''
-      if (includeGreenSpeed) row['그린스피드(ft)'] = detail.greenSpeed ?? ''
+      secMetrics.forEach(m => { row[m.label] = detail[m.key] ?? '' })
+      secRangeMetrics.forEach(m => { row[`${m.label}(${m.unit})`] = detail[m.key] ?? '' })
       row['이종잔디 종류'] = weedStr
       row['메모'] = h.memo || ''
-      // 사진 URL 컬럼
       photos.forEach((p, i) => {
-        const url = typeof p === 'string' ? p : p.dataUrl
-        row[`사진${i + 1} URL`] = url || ''
+        row[`사진${i + 1} URL`] = (typeof p === 'string' ? p : p.dataUrl) || ''
       })
       return row
     })
@@ -72,11 +60,11 @@ export function exportInspectionExcel(rec) {
 
   // 구역별
   ;[
-    { name: '티잉그라운드', data: rec.tee, green: false },
-    { name: '페어웨이',     data: rec.fairway, green: false },
-    { name: '그린',        data: rec.green, green: true },
-  ].forEach(({ name, data, green }) => {
-    const rows = secToRows(data, green)
+    { name: '티잉그라운드', data: rec.tee,     sec: 'tee' },
+    { name: '페어웨이',     data: rec.fairway, sec: 'fw'  },
+    { name: '그린',        data: rec.green,   sec: 'green' },
+  ].forEach(({ name, data, sec }) => {
+    const rows = secToRows(data, sec)
     if (!rows.length) return
     const ws = XLSX.utils.json_to_sheet(rows)
     XLSX.utils.book_append_sheet(wb, ws, name)
