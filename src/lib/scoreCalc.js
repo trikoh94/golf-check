@@ -10,7 +10,11 @@ export const METRICS = [
   { key: 'disease',      label: '병해',     emoji: '🦠', dir: 'bad',  sections: ['tee','fw','green'] },
   { key: 'compaction',   label: '답압피해', emoji: '👣', dir: 'bad',  sections: ['tee','fw','green'] },
   { key: 'repairArea',   label: '보식지',   emoji: '🩹', dir: 'bad',  sections: ['tee','fw','green'] },
-  { key: 'edgeMgmt',     label: '선관리',   emoji: '✂️', dir: 'good', sections: ['tee','fw','green'] },
+  { key: 'edgeMgmt',     label: '선관리',           emoji: '✂️',  dir: 'good', sections: ['tee','green'] },
+  { key: 'teeSurrounds', label: '티주변 관리상태',   emoji: '🏌️', dir: 'good', sections: ['tee'] },
+  { key: 'growthMgmt',   label: '생육관리',         emoji: '🌾',  dir: 'good', sections: ['fw'] },
+  { key: 'collarGrass',  label: '그린칼라 잔디상태', emoji: '🌿',  dir: 'good', sections: ['green'] },
+  { key: 'collarEdge',   label: '그린칼라 선관리',   emoji: '✂️',  dir: 'good', sections: ['green'] },
   { key: 'renovation',   label: '갱신관리', emoji: '🔄', dir: 'good', sections: ['tee','fw','green'] },
   { key: 'rootLength',   label: '뿌리길이', emoji: '🌱', dir: 'good', sections: ['tee','fw','green'] },
   { key: 'moisture',     label: '수분',     emoji: '💧', dir: 'range', sections: ['tee','fw','green'], unit: '%' },
@@ -21,9 +25,9 @@ export const METRICS = [
 export const SCORE_METRICS = METRICS.filter(m => m.dir === 'good' || m.dir === 'bad')
 
 export const DEFAULT_WEIGHTS = {
-  green: { colorDensity:20, weedGrass:15, disease:25, compaction:5,  repairArea:10, edgeMgmt:0,  renovation:5,  rootLength:20 },
-  fw:    { colorDensity:20, weedGrass:15, disease:15, compaction:20, repairArea:10, edgeMgmt:5,  renovation:5,  rootLength:10 },
-  tee:   { colorDensity:20, weedGrass:15, disease:15, compaction:25, repairArea:5,  edgeMgmt:5,  renovation:5,  rootLength:10 },
+  green: { colorDensity:20, weedGrass:15, disease:20, compaction:5,  repairArea:10, edgeMgmt:0,  renovation:5,  rootLength:15, collarGrass:5, collarEdge:5 },
+  fw:    { colorDensity:20, weedGrass:15, disease:15, compaction:20, repairArea:10, edgeMgmt:0,  renovation:5,  rootLength:10, growthMgmt:5 },
+  tee:   { colorDensity:20, weedGrass:15, disease:15, compaction:20, repairArea:5,  edgeMgmt:5,  renovation:5,  rootLength:10, teeSurrounds:5 },
 }
 
 export async function fetchWeights() {
