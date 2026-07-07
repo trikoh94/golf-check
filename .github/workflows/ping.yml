@@ -1,0 +1,18 @@
+name: Supabase Keep-Alive
+
+on:
+  schedule:
+    - cron: '0 1 * * *'  # 매일 오전 10시 (KST = UTC+9)
+  workflow_dispatch:       # 수동 실행도 가능
+
+jobs:
+  ping:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Ping Supabase
+        run: |
+          curl -s -o /dev/null -w "%{http_code}" \
+            "https://wecsemcnuzsvwocmfqhi.supabase.co/rest/v1/inspections?select=id&limit=1" \
+            -H "apikey: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlY3NlbWNudXpzdndvY21mcWhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzg0MTMsImV4cCI6MjA5Njk1NDQxM30.FWIJOB4OxjvC28eboBRXR0WJdr66YWYIt4ajEL6w5fU" \
+            -H "Authorization: Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6IndlY3NlbWNudXpzdndvY21mcWhpIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODEzNzg0MTMsImV4cCI6MjA5Njk1NDQxM30.FWIJOB4OxjvC28eboBRXR0WJdr66YWYIt4ajEL6w5fU"
+          echo " Supabase ping 완료"
