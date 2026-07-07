@@ -26,7 +26,7 @@ export default function SummaryPage({ onSaved }) {
 
     const payload = {
       date,
-      club: club || '솔라시도 골프클럽',
+      club: club || null,
       course: course || null,
       inspector,
       weather: weather || null,

@@ -6,7 +6,7 @@ import { supabase } from '../lib/supabase'
 
 const initialForm = {
   date: new Date().toISOString().slice(0, 10),
-  club: '솔라시도 골프클럽',
+  club: '',
   course: '',
   inspector: '',
   weather: '',
@@ -214,7 +214,7 @@ export function AppProvider({ children }) {
 
     const payload = {
       date: date || new Date().toISOString().slice(0, 10),
-      club: club || '솔라시도 골프클럽',
+      club: club || null,
       course: course || null,
       inspector: inspector || '(미입력)',
       weather: weather || null,
