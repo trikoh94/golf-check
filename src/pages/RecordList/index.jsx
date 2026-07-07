@@ -122,7 +122,7 @@ export default function RecordList({ onSelect }) {
                 <div key={r.id} className="record-card-wrap">
                   <div className="record-card" onClick={() => onSelect(r.id)}>
                     <div className="rc-header">
-                      <span className="rc-course-tag">{r.course || '코스미지정'}</span>
+                      {r.course && <span className="rc-course-tag">{r.course}</span>}
                       <span className="rc-inspector">{r.inspector} · {r.hole_count}홀</span>
                     </div>
                     <div className="rc-scores">
