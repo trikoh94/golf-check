@@ -3,12 +3,6 @@ import { useApp } from '../../context/AppContext'
 
 const HOLE_OPTIONS = [9, 18, 27]
 
-const CLUB_CONFIG = {
-  '솔라시도 골프클럽': { courses: ['솔라', '시도', '비치'] },
-  '파인비치 골프장':   { courses: ['파인', '비치'] },
-}
-const CLUB_NAMES = Object.keys(CLUB_CONFIG)
-
 export default function BasicInfo() {
   const {
     formData, setForm, setHoleCount,
@@ -33,13 +27,7 @@ export default function BasicInfo() {
     }
   }
 
-  function handleClubChange(club) {
-    setForm({ club, course: '' })
-  }
-
   const wd = formData.weatherDetail
-  const currentClub = CLUB_NAMES.includes(formData.club) ? formData.club : CLUB_NAMES[0]
-  const courseOptions = CLUB_CONFIG[currentClub]?.courses ?? []
 
   return (
     <div className="page-section">
@@ -73,30 +61,8 @@ export default function BasicInfo() {
           onChange={e => setForm({ date: e.target.value })} />
 
         <label className="form-label">골프장</label>
-        <div className="club-toggle">
-          {CLUB_NAMES.map(name => (
-            <button key={name}
-              className={'club-toggle-btn' + (currentClub === name ? ' active' : '')}
-              onClick={() => handleClubChange(name)}>
-              {name}
-            </button>
-          ))}
-        </div>
-
-        <label className="form-label">코스명</label>
-        <div className="course-select-wrap">
-          <div className="course-presets">
-            {courseOptions.map(c => (
-              <button key={c}
-                className={'course-preset-btn' + (formData.course === c ? ' active' : '')}
-                onClick={() => setForm({ course: c })}>
-                {c}
-              </button>
-            ))}
-          </div>
-          <input type="text" className="form-input" value={formData.course}
-            placeholder="직접 입력" onChange={e => setForm({ course: e.target.value })} />
-        </div>
+        <input type="text" className="form-input" value={formData.club}
+          placeholder="골프장 이름 입력" onChange={e => setForm({ club: e.target.value })} />
 
         <label className="form-label">점검자</label>
         <input type="text" className="form-input" value={formData.inspector}
