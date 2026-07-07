@@ -5,29 +5,28 @@ import { supabase } from './supabase'
  * dir: 'good' = 높을수록 좋음 / 'bad' = 높을수록 나쁨
  */
 export const METRICS = [
-  { key: 'colorDensity', label: '색상밀도', emoji: '🟢', dir: 'good', sections: ['tee','fw','green'] },
-  { key: 'weedGrass',    label: '이종잔디', emoji: '🌿', dir: 'bad',  sections: ['tee','fw','green'] },
-  { key: 'disease',      label: '병해',     emoji: '🦠', dir: 'bad',  sections: ['tee','fw','green'] },
-  { key: 'compaction',   label: '답압피해', emoji: '👣', dir: 'bad',  sections: ['tee','fw','green'] },
-  { key: 'repairArea',   label: '보식지',   emoji: '🩹', dir: 'bad',  sections: ['tee','fw','green'] },
-  { key: 'edgeMgmt',     label: '선관리',           emoji: '✂️',  dir: 'good', sections: ['tee','green'] },
-  { key: 'teeSurrounds', label: '티주변 관리상태',   emoji: '🏌️', dir: 'good', sections: ['tee'] },
-  { key: 'growthMgmt',   label: '생육관리',         emoji: '🌾',  dir: 'good', sections: ['fw'] },
-  { key: 'collarGrass',  label: '그린칼라 잔디상태', emoji: '🌿',  dir: 'good', sections: ['green'] },
-  { key: 'collarEdge',   label: '그린칼라 선관리',   emoji: '✂️',  dir: 'good', sections: ['green'] },
-  { key: 'renovation',   label: '갱신관리', emoji: '🔄', dir: 'good', sections: ['tee','fw','green'] },
-  { key: 'rootLength',   label: '뿌리길이', emoji: '🌱', dir: 'good', sections: ['tee','fw','green'] },
-  { key: 'moisture',     label: '수분',     emoji: '💧', dir: 'range', sections: ['tee','fw','green'], unit: '%' },
-  { key: 'soilTemp',    label: '토양온도', emoji: '🌡️', dir: 'range', sections: ['tee','fw','green'], unit: '°C' },
-  { key: 'greenSpeed',   label: '그린스피드', emoji: '⚡', dir: 'info', sections: ['green'], unit: 'ft' },
+  { key: 'colorDensity', label: '색상밀도',         emoji: '🟢',  dir: 'good',  sections: ['tee','fw','green'] },
+  { key: 'renovation',   label: '갱신관리',         emoji: '🔄',  dir: 'good',  sections: ['tee','fw','green'] },
+  { key: 'edgeMgmt',     label: '선관리',           emoji: '✂️',  dir: 'good',  sections: ['tee','green'] },
+  { key: 'teeSurrounds', label: '티주변 관리상태',   emoji: '🏌️', dir: 'good',  sections: ['tee'] },
+  { key: 'growthMgmt',   label: '생육관리',         emoji: '🌾',  dir: 'good',  sections: ['fw'] },
+  { key: 'collarGrass',  label: '그린칼라 잔디상태', emoji: '🌿',  dir: 'good',  sections: ['green'] },
+  { key: 'collarEdge',   label: '그린칼라 선관리',   emoji: '✂️',  dir: 'good',  sections: ['green'] },
+  { key: 'weedGrass',    label: '이종잔디',         emoji: '🌿',  dir: 'bad',   sections: ['tee','fw','green'] },
+  { key: 'disease',      label: '병해',             emoji: '🦠',  dir: 'bad',   sections: ['tee','fw','green'] },
+  { key: 'compaction',   label: '답압피해',         emoji: '👣',  dir: 'bad',   sections: ['tee','fw','green'] },
+  { key: 'repairArea',   label: '보식지',           emoji: '🩹',  dir: 'bad',   sections: ['tee','fw','green'] },
+  { key: 'rootLength',   label: '뿌리길이',         emoji: '🌱',  dir: 'range', sections: ['tee','fw','green'], unit: 'cm' },
+  { key: 'moisture',     label: '수분',             emoji: '💧',  dir: 'range', sections: ['tee','fw','green'], unit: '%' },
+  { key: 'greenSpeed',   label: '그린스피드',       emoji: '⚡',  dir: 'info',  sections: ['green'], unit: 'ft' },
 ]
 
 export const SCORE_METRICS = METRICS.filter(m => m.dir === 'good' || m.dir === 'bad')
 
 export const DEFAULT_WEIGHTS = {
-  green: { colorDensity:20, weedGrass:15, disease:20, compaction:5,  repairArea:10, edgeMgmt:0,  renovation:5,  rootLength:15, collarGrass:5, collarEdge:5 },
-  fw:    { colorDensity:20, weedGrass:15, disease:15, compaction:20, repairArea:10, edgeMgmt:0,  renovation:5,  rootLength:10, growthMgmt:5 },
-  tee:   { colorDensity:20, weedGrass:15, disease:15, compaction:20, repairArea:5,  edgeMgmt:5,  renovation:5,  rootLength:10, teeSurrounds:5 },
+  green: { colorDensity:25, weedGrass:15, disease:20, compaction:5,  repairArea:10, edgeMgmt:0,  renovation:5,  collarGrass:10, collarEdge:10 },
+  fw:    { colorDensity:25, weedGrass:15, disease:15, compaction:20, repairArea:10, edgeMgmt:0,  renovation:5,  growthMgmt:10 },
+  tee:   { colorDensity:25, weedGrass:15, disease:15, compaction:20, repairArea:5,  edgeMgmt:5,  renovation:5,  teeSurrounds:10 },
 }
 
 export async function fetchWeights() {
