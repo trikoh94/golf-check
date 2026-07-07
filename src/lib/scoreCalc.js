@@ -16,7 +16,7 @@ export const METRICS = [
   { key: 'disease',      label: '병해',             emoji: '🦠',  dir: 'bad',   sections: ['tee','fw','green'] },
   { key: 'compaction',   label: '답압피해',         emoji: '👣',  dir: 'bad',   sections: ['tee','fw','green'] },
   { key: 'repairArea',   label: '보식지',           emoji: '🩹',  dir: 'bad',   sections: ['tee','fw','green'] },
-  { key: 'rootLength',   label: '뿌리길이',         emoji: '🌱',  dir: 'range', sections: ['tee','fw','green'], unit: 'cm' },
+  { key: 'rootLength',   label: '뿌리길이',         emoji: '🌱',  dir: 'range', sections: ['tee','fw'], unit: 'cm' },
   { key: 'moisture',     label: '수분',             emoji: '💧',  dir: 'range', sections: ['tee','fw','green'], unit: '%' },
   { key: 'greenSpeed',   label: '그린스피드',       emoji: '⚡',  dir: 'info',  sections: ['green'], unit: 'ft' },
 ]

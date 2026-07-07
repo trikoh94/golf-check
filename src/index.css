@@ -835,6 +835,13 @@ textarea.form-input { resize: vertical; }
   padding: 0 .5rem; font-size: 1rem; font-weight: 600; text-align: center;
 }
 .hps-unit { font-size: .85rem; color: #6b7280; white-space: nowrap; }
+.hps-weed-types { display: flex; flex-wrap: wrap; gap: .35rem; margin-top: .3rem; padding-left: .2rem; }
+.hps-weed-btn {
+  padding: .35rem .75rem; border: 2px solid #d1d5db; border-radius: 2rem;
+  background: #f9fafb; font-size: .8rem; font-weight: 500; color: #374151;
+  cursor: pointer; transition: all .12s;
+}
+.hps-weed-btn.active { border-color: #1a3d2b; background: #1a3d2b; color: #fff; font-weight: 700; }
 /* ─── 임시저장 바 (탭 위에 고정) ───────────────────────── */
 .draft-save-bar {
   display: flex; align-items: center; justify-content: space-between;
